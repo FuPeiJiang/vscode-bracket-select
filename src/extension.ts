@@ -2,9 +2,7 @@ import {commands,window,workspace,Selection} from 'vscode'
 import type {ExtensionContext,Position} from 'vscode'
 
 export function activate(context: ExtensionContext): void {
-  const max = Math.max
   const min = Math.min
-  const abs = Math.abs
   const d = console.debug.bind(console)
 
   // const bracketPairs = workspace.getConfiguration('bracket-select').get('bracketPairs');
@@ -34,14 +32,9 @@ export function activate(context: ExtensionContext): void {
         const leftLen = c - 1
         const rightLen = numberOfChars - c
 
-        const shortest = min(leftLen,rightLen)
-
-        const lastLeft = c - shortest - 2
-
-        const rest = numberOfChars - 2 * shortest - 1
+        const lastLeft = c - min(leftLen,rightLen) - 2
 
         d(lastLeft)
-        d(rest)
         let rightC = leftLen,leftC
         for (leftC = c - 1; leftC > lastLeft; leftC--) {
           console.log(line[leftC])
