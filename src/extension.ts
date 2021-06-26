@@ -2,6 +2,8 @@ import {commands,window,workspace,Selection} from 'vscode'
 import type {ExtensionContext,Position} from 'vscode'
 
 export function activate(context: ExtensionContext): void {
+  const max = Math.max
+  const d = console.debug.bind(console)
 
   // const bracketPairs = workspace.getConfiguration('bracket-select').get('bracketPairs');
   const sameLineSameBracketArr: string[] | undefined = workspace.getConfiguration('bracket-select').get('sameLineSameBracket')
@@ -24,13 +26,21 @@ export function activate(context: ExtensionContext): void {
         //check for closest in line, start at left
         //for both sides
         //then the rest of the longer one
-        const len = line.length
-        for (let leftC = c - 1; leftC > -1; leftC--) {
+        // const len = min(c,line.length - c)
+        // lenMinusC = len - c
+        // const lastLeft = max(-1,c - (lines.length - c))
+        // const lastLeft = max(-1,here - right)
+        // right = length - here
+        // const lastLeft = max(-1,2 * c - lines.length)
+        // const lastLeft = max(-1,2 * (c - 1) - lines.length)
+        const lastLeft = max(-1,2 * c - 2 - lines.length)
+
+        d(lastLeft)
+        let rightC = c
+        // for (let leftC = c - 1,lenMinusC = len - c; leftC > lenMinusC; leftC--) {
+        for (let leftC = c - 1; leftC > lastLeft; leftC--) {
           console.log(line[leftC])
-        }
-        console.log('=========')
-        for (let rightC = c; rightC < len; rightC++) {
-          console.log(line[rightC])
+          console.log(line[rightC++])
         }
       }
 
@@ -43,6 +53,7 @@ export function activate(context: ExtensionContext): void {
         const end = selection.end
 
         selectionFromActive(active)
+        return
 
         let activeEqualStart = false
         if (active.character === start.character && active.line === start.line) {
