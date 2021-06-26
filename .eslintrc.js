@@ -148,7 +148,7 @@ module.exports = {
       'error',
     ],
     'no-inner-declarations':[
-      'error',
+      'off',
     ],
     'no-invalid-regexp':[
       'error',

@@ -19,12 +19,10 @@
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
-		"commands": [
-			{
-				"command": "git-commits-editor.helloWorld",
-				"title": "Hello World"
-			}
-		]
+		"commands": [{
+			"command": "git-commits-editor.helloWorld",
+			"title": "Hello World"
+		}]
 	},
 	"scripts": {
 		"ext": "webpack --mode production && vsce package -o git-commits-editor.vsix && code --install-extension git-commits-editor.vsix",
@@ -51,5 +49,26 @@
 		"vscode": "^1.1.37",
 		"webpack": "^5.40.0",
 		"webpack-cli": "^4.7.2"
+	},
+	"configuration": {
+		"title": "Bracket Select configuration",
+		"properties": {
+			"bracket-select.bracketPairs": {
+				"type": "array",
+				"default": [
+					["(", ")"],
+					["{", "}"],
+					["[", "]"]
+				]
+			},
+			"bracket-select.sameLineSameBracket": {
+				"type": "array",
+				"default": [
+					"\"",
+					"'",
+					"`"
+				]
+			}
+		}
 	}
 }

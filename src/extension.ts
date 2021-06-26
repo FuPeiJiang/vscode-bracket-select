@@ -1,12 +1,30 @@
-import {commands,window,Selection} from 'vscode'
-import type {ExtensionContext} from 'vscode'
+import {commands,window,workspace,Selection} from 'vscode'
+import type {ExtensionContext,Position} from 'vscode'
 
 export function activate(context: ExtensionContext): void {
+
+  // const bracketPairs = workspace.getConfiguration('bracket-select').get('bracketPairs');
+  const sameLineSameBracketArr: string[] | undefined = workspace.getConfiguration('bracket-select').get('sameLineSameBracket')
+  const sameLineSameBracketObj: stringIndexString = {}
+  if (sameLineSameBracketArr) {
+    for (let i = 0,len = sameLineSameBracketArr.length; i < len; i++) {
+      sameLineSameBracketObj[sameLineSameBracketArr[i]] = sameLineSameBracketArr[i]
+    }
+  }
 
   context.subscriptions.push(commands.registerCommand('git-commits-editor.helloWorld',() => {
 
     const activeEditor = window.activeTextEditor
     if (activeEditor) {
+
+      const lines = activeEditor.document.getText().split('\n')
+
+      function selectionFromActive(active: Position) {
+        const c = active.character,i = active.line
+        console.log(lines[i])
+        console.log(lines[i][c - 1])
+        console.log(lines[i][c])
+      }
 
       const selectionArr = activeEditor.selections
       const newSelectionArr: Selection[] = []
@@ -15,7 +33,8 @@ export function activate(context: ExtensionContext): void {
         const active = selection.active
         const start = selection.start
         const end = selection.end
-        console.log(selectionArr[i].active)
+
+        selectionFromActive(active)
 
         let activeEqualStart = false
         if (active.character === start.character && active.line === start.line) {
@@ -32,8 +51,13 @@ export function activate(context: ExtensionContext): void {
         /// new Selection(anchorLine: number, anchorCharacter: number, activeLine: number, activeCharacter: number): Selection
         newSelectionArr.push(new Selection(selAnchor.line,selAnchor.character - 2,selActive.line,selActive.character + 2))
       }
-      activeEditor.selections = newSelectionArr
+      // activeEditor.selections = newSelectionArr
     }
 
   }))
+}
+
+// #types
+type stringIndexString = {
+  [key: string]: string,
 }
