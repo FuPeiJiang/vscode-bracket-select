@@ -3,6 +3,8 @@ import type {ExtensionContext,Position} from 'vscode'
 
 export function activate(context: ExtensionContext): void {
   const max = Math.max
+  const min = Math.min
+  const abs = Math.abs
   const d = console.debug.bind(console)
 
   // const bracketPairs = workspace.getConfiguration('bracket-select').get('bracketPairs');
@@ -26,21 +28,34 @@ export function activate(context: ExtensionContext): void {
         //check for closest in line, start at left
         //for both sides
         //then the rest of the longer one
-        // const len = min(c,line.length - c)
-        // lenMinusC = len - c
-        // const lastLeft = max(-1,c - (lines.length - c))
-        // const lastLeft = max(-1,here - right)
-        // right = length - here
-        // const lastLeft = max(-1,2 * c - lines.length)
-        // const lastLeft = max(-1,2 * (c - 1) - lines.length)
-        const lastLeft = max(-1,2 * c - 2 - lines.length)
+
+        const numberOfChars = lines.length
+
+        const leftLen = c - 1
+        const rightLen = numberOfChars - c
+
+        const shortest = min(leftLen,rightLen)
+
+        const lastLeft = c - shortest - 2
+
+        const rest = numberOfChars - 2 * shortest - 1
 
         d(lastLeft)
-        let rightC = c
-        // for (let leftC = c - 1,lenMinusC = len - c; leftC > lenMinusC; leftC--) {
-        for (let leftC = c - 1; leftC > lastLeft; leftC--) {
+        d(rest)
+        let rightC = leftLen,leftC
+        for (leftC = c - 1; leftC > lastLeft; leftC--) {
           console.log(line[leftC])
-          console.log(line[rightC++])
+          console.log(line[++rightC])
+        }
+        console.log('====================')
+        if (leftLen > rightLen) {
+          while (leftC > -1) {
+            console.log(line[leftC--])
+          }
+        } else if (rightLen > leftLen) {
+          while (rightC < numberOfChars) {
+            console.log(line[++rightC])
+          }
         }
       }
 
