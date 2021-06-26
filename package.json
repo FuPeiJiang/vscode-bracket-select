@@ -1,0 +1,55 @@
+{
+	"name": "git-commits-editor",
+	"displayName": "git-commits-editor",
+	"description": "",
+	"publisher": "FuPeiJiang",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.52.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/FuPeiJiang/git-commits-editor"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:git-commits-editor.helloWorld"
+	],
+	"main": "./dist/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "git-commits-editor.helloWorld",
+				"title": "Hello World"
+			}
+		]
+	},
+	"scripts": {
+		"ext": "webpack --mode production && vsce package -o git-commits-editor.vsix && code --install-extension git-commits-editor.vsix",
+		"vsix": "webpack --mode production && vsce package -o git-commits-editor.vsix",
+		"nowebpack": "vsce package -o git-commits-editor.vsix && code --install-extension git-commits-editor.vsix",
+		"vscode:prepublish": "yarn run package",
+		"compile": "webpack --config ./webpack.config.js",
+		"watch": "webpack --watch --config ./webpack.config.js",
+		"package": "webpack --mode production --devtool hidden-source-map --config ./webpack.config.js",
+		"test-compile": "tsc -p ./",
+		"test-watch": "tsc -watch -p ./",
+		"pretest": "yarn run test-compile && yarn run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/node": "^15.12.4",
+		"@types/vscode": "^1.57.0",
+		"@typescript-eslint/eslint-plugin": "^4.28.0",
+		"@typescript-eslint/parser": "^4.28.0",
+		"eslint": "^7.29.0",
+		"ts-loader": "^9.2.3",
+		"typescript": "^4.3.4",
+		"vscode": "^1.1.37",
+		"webpack": "^5.40.0",
+		"webpack-cli": "^4.7.2"
+	}
+}
