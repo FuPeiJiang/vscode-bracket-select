@@ -20,10 +20,18 @@ export function activate(context: ExtensionContext): void {
       const lines = activeEditor.document.getText().split('\n')
 
       function selectionFromActive(active: Position) {
-        const c = active.character,i = active.line
-        console.log(lines[i])
-        console.log(lines[i][c - 1])
-        console.log(lines[i][c])
+        const c = active.character,i = active.line,line = lines[i]
+        //check for closest in line, start at left
+        //for both sides
+        //then the rest of the longer one
+        const len = line.length
+        for (let leftC = c - 1; leftC > -1; leftC--) {
+          console.log(line[leftC])
+        }
+        console.log('=========')
+        for (let rightC = c; rightC < len; rightC++) {
+          console.log(line[rightC])
+        }
       }
 
       const selectionArr = activeEditor.selections
