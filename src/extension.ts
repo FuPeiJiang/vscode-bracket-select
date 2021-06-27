@@ -22,6 +22,7 @@ export function activate(context: ExtensionContext): void {
 
       const selectionArr = activeEditor.selections
       const newSelectionArr: Selection[] = []
+      labelEachCursor:
       for (let n = 0,len = selectionArr.length; n < len; n++) {
         const selection = selectionArr[n]
         const active = selection.active
@@ -41,6 +42,9 @@ export function activate(context: ExtensionContext): void {
         const lastLeft = c - min(leftLen,rightLen) - 2
 
         let rightC = leftLen,leftC
+
+        // const stringIndexBool
+
         //check for closest in line, start at left
         //for both sides
         //then the rest of the longer one
@@ -72,35 +76,40 @@ export function activate(context: ExtensionContext): void {
           // }
           break sameLineLabel
         }
-        if (lookingFor) {
-          let foundOtherSame
-          if (c1 !== undefined) {
-            while (rightC++ < numberOfChars) {
-              if (thisLine[rightC] === lookingFor) {
-                d(111)
-                c2 = rightC
-                foundOtherSame = true
-                break
+        labelFoundOtherSame:
+        while (true) {
+          if (lookingFor) {
+            let rightBak = rightC
+            if (c1 !== undefined) {
+              while (rightC++ < numberOfChars) {
+                if (thisLine[rightC] === lookingFor) {
+                  d(111)
+                  c2 = rightC
+                  break labelFoundOtherSame
+                }
+              }
+              if (++rightBak < numberOfChars && sameLineSameBracketObj[thisLine[rightBak]]) {
+                lookingFor = sameLineSameBracketObj[thisLine[rightBak]]
+                c2 = rightBak
               }
             }
-          } else if (c2 !== undefined) {
-            while (leftC-- > -1) {
-              if (thisLine[leftC] === lookingFor) {
-                d(222)
-                c1 = leftC
-                foundOtherSame = true
-                break
+            if (c2 !== undefined) {
+              while (leftC-- > -1) {
+                if (thisLine[leftC] === lookingFor) {
+                  d(222)
+                  c1 = leftC
+                  break labelFoundOtherSame
+                }
               }
             }
-          }
-          if (foundOtherSame) {
-            if (activeEqualStart) {
-              newSelectionArr.push(new Selection(i,c2 as number,i,c1 as number + 1))
-            } else {
-              newSelectionArr.push(new Selection(i,c1 as number + 1,i,c2 as number))
-            }
-          }
 
+          }
+          continue labelEachCursor
+        }
+        if (activeEqualStart) {
+          newSelectionArr.push(new Selection(i,c2 as number,i,c1 as number + 1))
+        } else {
+          newSelectionArr.push(new Selection(i,c1 as number + 1,i,c2 as number))
         }
       }
       activeEditor.selections = newSelectionArr
@@ -111,4 +120,7 @@ export function activate(context: ExtensionContext): void {
 // #types
 type stringIndexString = {
   [key: string]: string,
+}
+type stringIndexBool = {
+  [key: string]: boolean,
 }
