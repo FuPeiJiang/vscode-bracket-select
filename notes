@@ -2,3 +2,6 @@ set selection -2 HERE +2 first ; + multicursor
 
 detect the closest " or ' or ` and do my thing on the same line : read from package.json options
 sameLineSameBracket
+
+if found one " but didn't find another matching "
+now look for '
