@@ -5,8 +5,6 @@ export function activate(context: ExtensionContext): void {
   const min = Math.min
   const d = console.debug.bind(console)
 
-  // const bracketPairs = workspace.getConfiguration('vscode-bracket-select').get('bracketPairs');
-  d(workspace.getConfiguration('vscode-bracket-select'))
   const sameLineSameBracketArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('sameLineSameBracket')
   const sameLineSameBracketObj: stringIndexString = {}
   if (sameLineSameBracketArr) {
@@ -29,15 +27,13 @@ export function activate(context: ExtensionContext): void {
         const active = selection.active
         const start = selection.start
 
-        // return
-
         let activeEqualStart = false
         if (active.character === start.character && active.line === start.line) {
           activeEqualStart = true //and anchor===end
         }
 
-        const c = active.character,i = active.line,line = lines[i]
-        const numberOfChars = lines.length
+        const c = active.character,i = active.line,thisLine = lines[i]
+        const numberOfChars = thisLine.length
 
         const leftLen = c - 1
         const rightLen = numberOfChars - c
@@ -48,20 +44,18 @@ export function activate(context: ExtensionContext): void {
         //check for closest in line, start at left
         //for both sides
         //then the rest of the longer one
-        let lookingFor
-        let c1,c2
+        let lookingFor,c1,c2
 
-        let foundSameLine = true
         sameLineLabel:
         while (true) {
           for (leftC = c - 1; leftC > lastLeft; leftC--) {
 
-            if (sameLineSameBracketObj[line[leftC]]) {
-              lookingFor = sameLineSameBracketObj[line[leftC]]
+            if (sameLineSameBracketObj[thisLine[leftC]]) {
+              lookingFor = sameLineSameBracketObj[thisLine[leftC]]
               c1 = leftC
               break sameLineLabel
-            } else if (sameLineSameBracketObj[line[++rightC]]) {
-              lookingFor = sameLineSameBracketObj[line[rightC]]
+            } else if (sameLineSameBracketObj[thisLine[++rightC]]) {
+              lookingFor = sameLineSameBracketObj[thisLine[rightC]]
               c2 = rightC
               break sameLineLabel
             }
@@ -76,37 +70,41 @@ export function activate(context: ExtensionContext): void {
           // console.log(line[++rightC])
           // }
           // }
-          foundSameLine = false
           break sameLineLabel
         }
-        d(lookingFor)
-        d(foundSameLine)
-        if (foundSameLine) {
-          if (c1) {
-            while (rightC < numberOfChars) {
-              if (line[++rightC] === lookingFor) {
+        if (lookingFor) {
+          let foundOtherSame
+          if (c1 !== undefined) {
+            while (rightC++ < numberOfChars) {
+              if (thisLine[rightC] === lookingFor) {
+                d(111)
                 c2 = rightC
+                foundOtherSame = true
                 break
               }
             }
-          } else if (c2) {
-            while (leftC > -1) {
-              if (line[leftC--] === lookingFor) {
+          } else if (c2 !== undefined) {
+            while (leftC-- > -1) {
+              if (thisLine[leftC] === lookingFor) {
+                d(222)
                 c1 = leftC
+                foundOtherSame = true
                 break
               }
             }
           }
-          if (activeEqualStart) {
-            newSelectionArr.push(new Selection(i,c2 as number,i,c1 as number))
-          } else {
-            newSelectionArr.push(new Selection(i,c1 as number,i,c2 as number))
+          if (foundOtherSame) {
+            if (activeEqualStart) {
+              newSelectionArr.push(new Selection(i,c2 as number,i,c1 as number + 1))
+            } else {
+              newSelectionArr.push(new Selection(i,c1 as number + 1,i,c2 as number))
+            }
           }
+
         }
       }
       activeEditor.selections = newSelectionArr
     }
-
   }))
 }
 
