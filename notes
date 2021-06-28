@@ -33,3 +33,5 @@ I'm NOT going to do that for multiline..
   }
 
 soo, if one runs out of lines, it's out, easy, BREAK
+
+need to define quotes for strings, skip strings to not match bracket inside strings
