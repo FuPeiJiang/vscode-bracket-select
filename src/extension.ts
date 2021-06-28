@@ -86,7 +86,7 @@ export function activate(context: ExtensionContext): void {
 
         labelLookForAnotherSame:
         while (true) {
-          let found,lookingFor,c1,c2,i1,i2
+          let found,lookingFor,c1,c2
 
           sameLineLabel:
           while (true) {
@@ -100,27 +100,27 @@ export function activate(context: ExtensionContext): void {
                 if (leftBracketObj[thisLine[leftC]] && !alreadyDoneObj[thisLine[leftC]]) {
                   found = thisLine[leftC]
                   lookingFor = leftBracketObj[found][1]
-                  c1 = leftC,i1 = i
                   singleLine = leftBracketObj[found][0]
-                  if (!singleLine) {
-                    isLeftMulti = true
-                    l1 = i,o1 = leftC
-                    l2 = i,o2 = rightC
-                    break findMatchingMulti
+                  if (singleLine) {
+                    c1 = leftC
+                    break sameLineLabel
                   }
-                  break sameLineLabel
+                  isLeftMulti = true
+                  l1 = i,o1 = leftC
+                  l2 = i,o2 = rightC
+                  break findMatchingMulti
                 } else if (rightBracketObj[thisLine[++rightC]] && !alreadyDoneObj[thisLine[rightC]]) {
                   found = thisLine[rightC]
                   lookingFor = rightBracketObj[found][1]
-                  c2 = rightC,i2 = i
                   singleLine = rightBracketObj[found][0]
                   if (!singleLine) {
-                    isLeftMulti = false
-                    l1 = i,o1 = leftC
-                    l2 = i,o2 = rightC
-                    break findMatchingMulti
+                    c2 = rightC
+                    break sameLineLabel
                   }
-                  break sameLineLabel
+                  isLeftMulti = false
+                  l1 = i,o1 = leftC
+                  l2 = i,o2 = rightC
+                  break findMatchingMulti
                 }
                 d(thisLine[leftC],thisLine[rightC])
               }
@@ -230,20 +230,6 @@ export function activate(context: ExtensionContext): void {
                     d(222)
                     c1 = leftC
                     break labelFoundOtherSame
-                  }
-                }
-                if (!singleLine) {
-                  let l = i,o
-                  while (--l > -1) {
-                    const mLine = lines[l]
-                    o = mLine.length
-                    while (--o > -1) {
-                      if (mLine[o] === lookingFor) {
-                        d(22222222222222222222222222)
-                        newSelectionArr.push(new Selection(i2 as number,c2,l,o + 1))
-                        continue labelEachCursor
-                      }
-                    }
                   }
                 }
               }
