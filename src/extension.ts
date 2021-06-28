@@ -6,10 +6,18 @@ export function activate(context: ExtensionContext): void {
   const d = console.debug.bind(console)
 
   const sameLineSameBracketArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('sameLineSameBracket')
+  const bracketPairsArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('bracketPairs')
   const sameLineSameBracketObj: stringIndexString = {}
   if (sameLineSameBracketArr) {
     for (let i = 0,len = sameLineSameBracketArr.length; i < len; i++) {
       sameLineSameBracketObj[sameLineSameBracketArr[i]] = sameLineSameBracketArr[i]
+    }
+  }
+  if (bracketPairsArr) {
+    for (let i = 0,len = bracketPairsArr.length; i < len; i++) {
+      const pairArr = bracketPairsArr[i]
+      sameLineSameBracketObj[pairArr[0]] = pairArr[1]
+      sameLineSameBracketObj[pairArr[1]] = pairArr[0]
     }
   }
 
