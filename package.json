@@ -5,7 +5,7 @@
 	"publisher": "FuPeiJiang",
 	"version": "0.0.1",
 	"engines": {
-		"vscode": "^1.52.0"
+		"vscode": "^1.57.0"
 	},
 	"repository": {
 		"type": "git",
@@ -52,9 +52,9 @@
 		}
 	},
 	"scripts": {
-		"ext": "webpack --mode production && vsce package -o git-commits-editor.vsix && code --install-extension git-commits-editor.vsix",
-		"vsix": "webpack --mode production && vsce package -o git-commits-editor.vsix",
-		"nowebpack": "vsce package -o git-commits-editor.vsix && code --install-extension git-commits-editor.vsix",
+		"ext": "webpack --mode production && vsce package -o vscode-bracket-select.vsix && code --install-extension vscode-bracket-select.vsix",
+		"vsix": "webpack --mode production && vsce package -o vscode-bracket-select.vsix",
+		"nowebpack": "vsce package -o vscode-bracket-select.vsix && code --install-extension vscode-bracket-select.vsix",
 		"vscode:prepublish": "yarn run package",
 		"compile": "webpack --config ./webpack.config.js",
 		"watch": "webpack --watch --config ./webpack.config.js",
