@@ -42,7 +42,6 @@ export function activate(context: ExtensionContext): void {
       labelEachCursor:
       for (let n = 0,len = selectionArr.length; n < len; n++) {
 
-
         const selection = selectionArr[n]
         const active = selection.active
         const start = selection.start
@@ -80,7 +79,6 @@ export function activate(context: ExtensionContext): void {
 
         let rightC = c - 1,leftC = rightC
         const lastLeft = leftC - min(leftLen,rightLen)
-
 
         //check for closest in line, start at left
         //for both sides
@@ -125,21 +123,22 @@ export function activate(context: ExtensionContext): void {
                 const found = line1[o1]
                 lookingFor = leftMultiObj[found]
 
-                let l = l2,o = o2,mLine = lines[l],numberOfChars = mLine.length
+                let l = l2,o = o2 + 1,mLine = lines[l],numberOfChars = mLine.length
 
                 while (true) {
-                  if (++o === numberOfChars) {
+                  while (o === numberOfChars) {
                     if (++l === howManyLines) {
                       alreadyDoneObj[found] = true
                       continue labelLookForAnotherSame
                     }
-                    o = 0,mLine = lines[l],numberOfChars = mLine.length
+                    o = 0,mLine = lines[l],numberOfChars = mLine.length //o could be 0 so loop it again
                   }
                   if (mLine[o] === lookingFor) {
                     d(333)
                     newSelectionArr.push(new Selection(l,o,l1,o1 + 1))
                     continue labelEachCursor
                   }
+                  o++
                 }
 
               }
@@ -158,7 +157,7 @@ export function activate(context: ExtensionContext): void {
                 let l = l1,mLine = lines[l],o = o1
 
                 while (true) {
-                  if (--o === -1) {
+                  while (o === -1) {
                     if (--l === -1) {
                       alreadyDoneObj[found] = true
                       continue labelLookForAnotherSame
@@ -170,6 +169,7 @@ export function activate(context: ExtensionContext): void {
                     newSelectionArr.push(new Selection(l2,o2,l,o + 1))
                     continue labelEachCursor
                   }
+                  o--
                 }
               }
 
