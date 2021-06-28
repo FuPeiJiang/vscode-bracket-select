@@ -23,6 +23,12 @@
 			"command": "vscode-bracket-select.helloWorld",
 			"title": "Hello World"
 		}],
+		"keybindings": [{
+			"command": "vscode-bracket-select.helloWorld",
+			"key": "ctrl+shift+f",
+			"mac": "cmd+shift+f",
+			"when": "editorTextFocus"
+		}],
 		"configuration": {
 			"title": "vscode Bracket Select configuration",
 			"properties": {
