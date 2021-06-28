@@ -90,42 +90,71 @@ export function activate(context: ExtensionContext): void {
               d(thisLine[leftC],thisLine[rightC])
             }
             //both sides, multiline
-            let o1 = leftC,l1 = i,line1 = thisLine
-            if (o1 === -1) {
-              l1 = i - 1
-              if (l1 === -1) {
-                continue labelEachCursor
-              }
-              line1 = lines[l1],o1 = line1.length
-            }
+            let o1 = leftC + 1 //sigh
+              ,l1 = i,line1 = thisLine
+
             let o2 = rightC,l2 = i,line2 = thisLine,numberOfChars2 = numberOfChars
             while (true) {
-              if (--o1 > -1) {
-                if (leftMultiObj[line1[o1]] && !alreadyDoneObj[line1[o1]]) {
-                  lookingFor = leftMultiObj[line1[o1]]
-                  c1 = o1,i1 = l1
-                  singleLine = false
-                  break sameLineLabel
-                }
-              } else {
-                if (++l1 as number === -1) {
+              //side left
+              if (--o1 === -1) {
+                if (--l1 === -1) {
                   continue labelEachCursor
                 }
-                line1 = lines[l1],o1 = line1.length
+                line1 = lines[l1],o1 = line1.length - 1
               }
-              if (++o2 < numberOfChars2) {
-                if (rightMultiObj[line2[o2]] && !alreadyDoneObj[line2[o2]]) {
-                  lookingFor = rightMultiObj[line2[o2]]
-                  c2 = rightC,i2 = l2
-                  singleLine = false
-                  break sameLineLabel
+              if (leftMultiObj[line1[o1]] && !alreadyDoneObj[line1[o1]]) {
+                //found left, look for right
+                const found = line1[o1]
+                lookingFor = leftMultiObj[found]
+
+                let l = l2,o = o2,mLine = lines[l],numberOfChars = mLine.length
+
+                while (true) {
+                  if (++o === numberOfChars) {
+                    if (++l === howManyLines) {
+                      alreadyDoneObj[found] = true
+                      continue labelLookForAnotherSame
+                    }
+                    o = 0,mLine = lines[l],numberOfChars = mLine.length
+                  }
+                  if (mLine[o] === lookingFor) {
+                    d(333)
+                    newSelectionArr.push(new Selection(l,o,l1,o1 + 1))
+                    continue labelEachCursor
+                  }
                 }
-              } else {
+
+              }
+              //side right
+              if (++o2 === numberOfChars2) {
                 if (++l2 === howManyLines) {
                   continue labelEachCursor
                 }
                 line2 = lines[l2],numberOfChars2 = line2.length,o2 = 0
               }
+              if (rightMultiObj[line2[o2]] && !alreadyDoneObj[line2[o2]]) {
+                //found right, look for left
+                const found = line2[o2]
+                lookingFor = rightMultiObj[found]
+
+                let l = l1,mLine = lines[l],o = o1
+
+                while (true) {
+                  if (--o === -1) {
+                    if (--l === -1) {
+                      alreadyDoneObj[found] = true
+                      continue labelLookForAnotherSame
+                    }
+                    mLine = lines[l],o = mLine.length - 1
+                  }
+                  if (mLine[o] === lookingFor) {
+                    d(444)
+                    newSelectionArr.push(new Selection(l2,o2,l,o + 1))
+                    continue labelEachCursor
+                  }
+                }
+              }
+
             }
             //break sameLineLabel is being done by the above while(true)
           }
@@ -151,9 +180,9 @@ export function activate(context: ExtensionContext): void {
                   let l = i,o
                   while (++l < howManyLines) {
                     const mLine = lines[l]
-                    const howManyChars = mLine.length
+                    const numberOfChars = mLine.length
                     o = 0
-                    while (o < howManyChars) {
+                    while (o < numberOfChars) {
                       if (mLine[o] === lookingFor) {
                         d(11111111111111111111111111)
                         newSelectionArr.push(new Selection(l,o,i1 as number,c1 + 1))

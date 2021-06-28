@@ -6,3 +6,11 @@
               }
               line2 = lines[l2],numberOfChars2 = line2.length,o2 = 0
             }
+
+            if (o1 === -1) {
+              l1 = i - 1
+              if (l1 === -1) {
+                continue labelEachCursor
+              }
+              line1 = lines[l1],o1 = line1.length
+            }
