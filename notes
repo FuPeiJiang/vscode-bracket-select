@@ -15,3 +15,21 @@ leftBracketObj, rightBracketObj
 
 
 case3 : haven't found in both sides thing
+
+//since both sides same amount of chars, don't need to check if out of chars TWICE, saves some ifs.
+I'm NOT going to do that for multiline..
+  let leftChars = 0
+  for (let l = i - 1; l > -1; l--) {
+    d(lines[l])
+    leftChars += lines[l].length
+  }
+  let rightChars = 0
+  for (let l = i + 1; l > -1; l--) {
+    d(lines[l])
+    rightChars += lines[l].length
+    if (rightChars > leftChars) {
+      //SEE THIS IF ?!?!?
+    }
+  }
+
+soo, if one runs out of lines, it's out, easy, BREAK

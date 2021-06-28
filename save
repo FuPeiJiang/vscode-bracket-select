@@ -1,0 +1,8 @@
+1#)
+            if (o2 === numberOfChars) {
+              l2 = i + 1
+              if (l2 === howManyLines) {
+                continue labelEachCursor
+              }
+              line2 = lines[l2],numberOfChars2 = line2.length,o2 = 0
+            }

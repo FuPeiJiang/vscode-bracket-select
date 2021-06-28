@@ -9,6 +9,9 @@ export function activate(context: ExtensionContext): void {
   const bracketPairsArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('bracketPairs')
   const leftBracketObj: stringIndexNumString = {}
   const rightBracketObj: stringIndexNumString = {}
+
+  const leftMultiObj: stringIndexString = {}
+  const rightMultiObj: stringIndexString = {}
   if (sameLineSameBracketArr) {
     for (let i = 0,len = sameLineSameBracketArr.length; i < len; i++) {
       leftBracketObj[sameLineSameBracketArr[i]] = [true,sameLineSameBracketArr[i]]
@@ -20,6 +23,8 @@ export function activate(context: ExtensionContext): void {
       const pairArr = bracketPairsArr[i]
       leftBracketObj[pairArr[0]] = [false,pairArr[1]]
       rightBracketObj[pairArr[1]] = [false,pairArr[0]]
+      leftMultiObj[pairArr[0]] = pairArr[1]
+      rightMultiObj[pairArr[1]] = pairArr[0]
     }
   }
   d(leftBracketObj,rightBracketObj)
@@ -65,7 +70,7 @@ export function activate(context: ExtensionContext): void {
 
         labelLookForAnotherSame:
         while (true) {
-          let lookingFor,c1,c2
+          let lookingFor,c1,c2,i1,i2
 
           sameLineLabel:
           while (true) {
@@ -73,20 +78,56 @@ export function activate(context: ExtensionContext): void {
 
               if (leftBracketObj[thisLine[leftC]] && !alreadyDoneObj[thisLine[leftC]]) {
                 lookingFor = leftBracketObj[thisLine[leftC]][1]
-                c1 = leftC
+                c1 = leftC,i1 = i
                 singleLine = leftBracketObj[thisLine[leftC]][0]
                 break sameLineLabel
               } else if (rightBracketObj[thisLine[++rightC]] && !alreadyDoneObj[thisLine[rightC]]) {
                 lookingFor = rightBracketObj[thisLine[rightC]][1]
-                c2 = rightC
+                c2 = rightC,i2 = i
                 singleLine = rightBracketObj[thisLine[rightC]][0]
                 break sameLineLabel
               }
               d(thisLine[leftC],thisLine[rightC])
             }
             //both sides, multiline
-
-            break sameLineLabel
+            let o1 = leftC,l1 = i,line1 = thisLine
+            if (o1 === -1) {
+              l1 = i - 1
+              if (l1 === -1) {
+                continue labelEachCursor
+              }
+              line1 = lines[l1],o1 = line1.length
+            }
+            let o2 = rightC,l2 = i,line2 = thisLine,numberOfChars2 = numberOfChars
+            while (true) {
+              if (--o1 > -1) {
+                if (leftMultiObj[line1[o1]] && !alreadyDoneObj[line1[o1]]) {
+                  lookingFor = leftMultiObj[line1[o1]]
+                  c1 = o1,i1 = l1
+                  singleLine = false
+                  break sameLineLabel
+                }
+              } else {
+                if (++l1 as number === -1) {
+                  continue labelEachCursor
+                }
+                line1 = lines[l1],o1 = line1.length
+              }
+              if (++o2 < numberOfChars2) {
+                if (rightMultiObj[line2[o2]] && !alreadyDoneObj[line2[o2]]) {
+                  lookingFor = rightMultiObj[line2[o2]]
+                  c2 = rightC,i2 = l2
+                  singleLine = false
+                  break sameLineLabel
+                }
+              } else {
+                if (++l2 === howManyLines) {
+                  continue labelEachCursor
+                }
+                line2 = lines[l2],numberOfChars2 = line2.length,o2 = 0
+              }
+            }
+            //break sameLineLabel is being done by the above while(true)
           }
           labelFoundOtherSame:
           while (true) {
@@ -115,7 +156,7 @@ export function activate(context: ExtensionContext): void {
                     while (o < howManyChars) {
                       if (mLine[o] === lookingFor) {
                         d(11111111111111111111111111)
-                        newSelectionArr.push(new Selection(l,o,i,c1 + 1))
+                        newSelectionArr.push(new Selection(l,o,i1 as number,c1 + 1))
                         continue labelEachCursor
                       }
                       o++
@@ -140,7 +181,7 @@ export function activate(context: ExtensionContext): void {
                     while (--o > -1) {
                       if (mLine[o] === lookingFor) {
                         d(22222222222222222222222222)
-                        newSelectionArr.push(new Selection(i,c2,l,o + 1))
+                        newSelectionArr.push(new Selection(i2 as number,c2,l,o + 1))
                         continue labelEachCursor
                       }
                     }
