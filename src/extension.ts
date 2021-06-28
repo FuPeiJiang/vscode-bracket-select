@@ -41,17 +41,35 @@ export function activate(context: ExtensionContext): void {
       const newSelectionArr: Selection[] = []
       labelEachCursor:
       for (let n = 0,len = selectionArr.length; n < len; n++) {
-        const alreadyDoneObj: stringIndexBool = {}
-        let singleLine = true
+
 
         const selection = selectionArr[n]
         const active = selection.active
         const start = selection.start
+        const end = selection.end
 
         let activeEqualStart = false
         if (active.character === start.character && active.line === start.line) {
           activeEqualStart = true //and anchor===end
         }
+
+        //check if already selected, expand selection to the brackets
+        const leftChar = lines[start.line][start.character - 1] //-1 because there will always be a char if selection {| -> go here |{
+        const rightChar = lines[end.line][end.character]
+        if (leftBracketObj[leftChar]) {
+          if (leftBracketObj[leftChar][1] === rightChar) {
+            if (activeEqualStart) {
+              newSelectionArr.push(new Selection(end.line,end.character + 1,start.line,start.character - 1))
+            } else {
+              newSelectionArr.push(new Selection(start.line,start.character - 1,end.line,end.character + 1))
+            }
+            continue labelEachCursor
+          }
+        }
+
+
+        const alreadyDoneObj: stringIndexBool = {}
+        let singleLine = true
 
         const c = active.character,i = active.line,thisLine = lines[i]
         const numberOfChars = thisLine.length
