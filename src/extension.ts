@@ -113,7 +113,7 @@ export function activate(context: ExtensionContext): void {
                   found = thisLine[rightC]
                   lookingFor = rightBracketObj[found][1]
                   singleLine = rightBracketObj[found][0]
-                  if (!singleLine) {
+                  if (singleLine) {
                     c2 = rightC
                     break sameLineLabel
                   }
