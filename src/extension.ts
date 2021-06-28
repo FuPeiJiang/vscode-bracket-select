@@ -7,19 +7,22 @@ export function activate(context: ExtensionContext): void {
 
   const sameLineSameBracketArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('sameLineSameBracket')
   const bracketPairsArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('bracketPairs')
-  const sameLineSameBracketObj: stringIndexString = {}
+  const leftBracketObj: stringIndexNumString = {}
+  const rightBracketObj: stringIndexNumString = {}
   if (sameLineSameBracketArr) {
     for (let i = 0,len = sameLineSameBracketArr.length; i < len; i++) {
-      sameLineSameBracketObj[sameLineSameBracketArr[i]] = sameLineSameBracketArr[i]
+      leftBracketObj[sameLineSameBracketArr[i]] = [true,sameLineSameBracketArr[i]]
+      rightBracketObj[sameLineSameBracketArr[i]] = [true,sameLineSameBracketArr[i]]
     }
   }
   if (bracketPairsArr) {
     for (let i = 0,len = bracketPairsArr.length; i < len; i++) {
       const pairArr = bracketPairsArr[i]
-      sameLineSameBracketObj[pairArr[0]] = pairArr[1]
-      sameLineSameBracketObj[pairArr[1]] = pairArr[0]
+      leftBracketObj[pairArr[0]] = [false,pairArr[1]]
+      rightBracketObj[pairArr[1]] = [false,pairArr[0]]
     }
   }
+  d(leftBracketObj,rightBracketObj)
 
   context.subscriptions.push(commands.registerCommand('vscode-bracket-select.helloWorld',() => {
 
@@ -27,12 +30,15 @@ export function activate(context: ExtensionContext): void {
     if (activeEditor) {
 
       const lines = activeEditor.document.getText().split('\n')
+      const howManyLines = lines.length
 
       const selectionArr = activeEditor.selections
       const newSelectionArr: Selection[] = []
       labelEachCursor:
       for (let n = 0,len = selectionArr.length; n < len; n++) {
         const alreadyDoneObj: stringIndexBool = {}
+        let singleLine = true
+
         const selection = selectionArr[n]
         const active = selection.active
         const start = selection.start
@@ -45,12 +51,13 @@ export function activate(context: ExtensionContext): void {
         const c = active.character,i = active.line,thisLine = lines[i]
         const numberOfChars = thisLine.length
 
-        const leftLen = c - 1
+        const leftLen = c
         const rightLen = numberOfChars - c
+        d(leftLen,rightLen)
 
-        const lastLeft = c - min(leftLen,rightLen) - 2
+        let rightC = c - 1,leftC = rightC
+        const lastLeft = leftC - min(leftLen,rightLen)
 
-        let rightC = leftLen,leftC = c - 1
 
         //check for closest in line, start at left
         //for both sides
@@ -64,16 +71,21 @@ export function activate(context: ExtensionContext): void {
           while (true) {
             for (;leftC > lastLeft; leftC--) {
 
-              if (sameLineSameBracketObj[thisLine[leftC]] && !alreadyDoneObj[thisLine[leftC]]) {
-                lookingFor = sameLineSameBracketObj[thisLine[leftC]]
+              if (leftBracketObj[thisLine[leftC]] && !alreadyDoneObj[thisLine[leftC]]) {
+                lookingFor = leftBracketObj[thisLine[leftC]][1]
                 c1 = leftC
+                singleLine = leftBracketObj[thisLine[leftC]][0]
                 break sameLineLabel
-              } else if (sameLineSameBracketObj[thisLine[++rightC]] && !alreadyDoneObj[thisLine[rightC]]) {
-                lookingFor = sameLineSameBracketObj[thisLine[rightC]]
+              } else if (rightBracketObj[thisLine[++rightC]] && !alreadyDoneObj[thisLine[rightC]]) {
+                lookingFor = rightBracketObj[thisLine[rightC]][1]
                 c2 = rightC
+                singleLine = rightBracketObj[thisLine[rightC]][0]
                 break sameLineLabel
               }
+              d(thisLine[leftC],thisLine[rightC])
             }
+            //both sides, multiline
+
             break sameLineLabel
           }
           labelFoundOtherSame:
@@ -89,10 +101,28 @@ export function activate(context: ExtensionContext): void {
                     break labelFoundOtherSame
                   }
                 }
-                if (++rightBak < numberOfChars && sameLineSameBracketObj[thisLine[rightBak]]) {
-                  lookingFor = sameLineSameBracketObj[thisLine[rightBak]]
-                  c2 = rightBak
+                if (singleLine) {
+                  if (++rightBak < numberOfChars && rightBracketObj[thisLine[rightBak]] && !alreadyDoneObj[thisLine[rightBak]]) {
+                    lookingFor = rightBracketObj[thisLine[rightBak]][1]
+                    c2 = rightBak
+                  }
+                } else {
+                  let l = i,o
+                  while (++l < howManyLines) {
+                    const mLine = lines[l]
+                    const howManyChars = mLine.length
+                    o = 0
+                    while (o < howManyChars) {
+                      if (mLine[o] === lookingFor) {
+                        d(11111111111111111111111111)
+                        newSelectionArr.push(new Selection(l,o,i,c1 + 1))
+                        continue labelEachCursor
+                      }
+                      o++
+                    }
+                  }
                 }
+
               }
               if (c2 !== undefined) {
                 while (leftC-- > -1) {
@@ -100,6 +130,20 @@ export function activate(context: ExtensionContext): void {
                     d(222)
                     c1 = leftC
                     break labelFoundOtherSame
+                  }
+                }
+                if (!singleLine) {
+                  let l = i,o
+                  while (--l > -1) {
+                    const mLine = lines[l]
+                    o = mLine.length
+                    while (--o > -1) {
+                      if (mLine[o] === lookingFor) {
+                        d(22222222222222222222222222)
+                        newSelectionArr.push(new Selection(i,c2,l,o + 1))
+                        continue labelEachCursor
+                      }
+                    }
                   }
                 }
               }
@@ -130,4 +174,7 @@ type stringIndexString = {
 }
 type stringIndexBool = {
   [key: string]: boolean,
+}
+type stringIndexNumString = {
+  [key: string]: [boolean,string],
 }

@@ -2,3 +2,7 @@ const a = {
   x1: 'y1',
   x4: y4,
 }
+7{a"b'"cd}e
+7{a"b'"cd
+a}e
+abc

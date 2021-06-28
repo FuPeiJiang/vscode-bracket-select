@@ -5,3 +5,13 @@ sameLineSameBracket
 
 if found one " but didn't find another matching "
 now look for '
+
+case0: sameline bracket, sameLine bracket
+case1: sameline bracket, multiLine bracket
+case0 || case1 : use the same algo to look for 2nd bracket
+ill use the sameLine algo first..
+
+leftBracketObj, rightBracketObj
+
+
+case3 : haven't found in both sides thing
