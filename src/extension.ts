@@ -24,6 +24,7 @@ export function activate(context: ExtensionContext): void {
       const newSelectionArr: Selection[] = []
       labelEachCursor:
       for (let n = 0,len = selectionArr.length; n < len; n++) {
+        const alreadyDoneObj: stringIndexBool = {}
         const selection = selectionArr[n]
         const active = selection.active
         const start = selection.start
@@ -41,76 +42,74 @@ export function activate(context: ExtensionContext): void {
 
         const lastLeft = c - min(leftLen,rightLen) - 2
 
-        let rightC = leftLen,leftC
-
-        // const stringIndexBool
+        let rightC = leftLen,leftC = c - 1
 
         //check for closest in line, start at left
         //for both sides
         //then the rest of the longer one
-        let lookingFor,c1,c2
 
-        sameLineLabel:
+        labelLookForAnotherSame:
         while (true) {
-          for (leftC = c - 1; leftC > lastLeft; leftC--) {
+          let lookingFor,c1,c2
 
-            if (sameLineSameBracketObj[thisLine[leftC]]) {
-              lookingFor = sameLineSameBracketObj[thisLine[leftC]]
-              c1 = leftC
-              break sameLineLabel
-            } else if (sameLineSameBracketObj[thisLine[++rightC]]) {
-              lookingFor = sameLineSameBracketObj[thisLine[rightC]]
-              c2 = rightC
-              break sameLineLabel
+          sameLineLabel:
+          while (true) {
+            for (;leftC > lastLeft; leftC--) {
+
+              if (sameLineSameBracketObj[thisLine[leftC]] && !alreadyDoneObj[thisLine[leftC]]) {
+                lookingFor = sameLineSameBracketObj[thisLine[leftC]]
+                c1 = leftC
+                break sameLineLabel
+              } else if (sameLineSameBracketObj[thisLine[++rightC]] && !alreadyDoneObj[thisLine[rightC]]) {
+                lookingFor = sameLineSameBracketObj[thisLine[rightC]]
+                c2 = rightC
+                break sameLineLabel
+              }
             }
+            break sameLineLabel
           }
-          // console.log('====================')
-          // if (leftLen > rightLen) {
-          // while (leftC > -1) {
-          // console.log(line[leftC--])
-          // }
-          // } else if (rightLen > leftLen) {
-          // while (rightC < numberOfChars) {
-          // console.log(line[++rightC])
-          // }
-          // }
-          break sameLineLabel
-        }
-        labelFoundOtherSame:
-        while (true) {
-          if (lookingFor) {
-            let rightBak = rightC
-            if (c1 !== undefined) {
-              while (rightC++ < numberOfChars) {
-                if (thisLine[rightC] === lookingFor) {
-                  d(111)
-                  c2 = rightC
-                  break labelFoundOtherSame
+          labelFoundOtherSame:
+          while (true) {
+            if (lookingFor) {
+              let rightBak = rightC
+              const leftBak = leftC
+              if (c1 !== undefined) {
+                while (rightC++ < numberOfChars) {
+                  if (thisLine[rightC] === lookingFor) {
+                    d(111)
+                    c2 = rightC
+                    break labelFoundOtherSame
+                  }
+                }
+                if (++rightBak < numberOfChars && sameLineSameBracketObj[thisLine[rightBak]]) {
+                  lookingFor = sameLineSameBracketObj[thisLine[rightBak]]
+                  c2 = rightBak
                 }
               }
-              if (++rightBak < numberOfChars && sameLineSameBracketObj[thisLine[rightBak]]) {
-                lookingFor = sameLineSameBracketObj[thisLine[rightBak]]
-                c2 = rightBak
-              }
-            }
-            if (c2 !== undefined) {
-              while (leftC-- > -1) {
-                if (thisLine[leftC] === lookingFor) {
-                  d(222)
-                  c1 = leftC
-                  break labelFoundOtherSame
+              if (c2 !== undefined) {
+                while (leftC-- > -1) {
+                  if (thisLine[leftC] === lookingFor) {
+                    d(222)
+                    c1 = leftC
+                    break labelFoundOtherSame
+                  }
                 }
               }
+              alreadyDoneObj[lookingFor] = true
+              rightC = rightBak,leftC = leftBak
+              continue labelLookForAnotherSame
             }
-
+            continue labelEachCursor
           }
-          continue labelEachCursor
+          if (activeEqualStart) {
+            newSelectionArr.push(new Selection(i,c2 as number,i,c1 as number + 1))
+          } else {
+            newSelectionArr.push(new Selection(i,c1 as number + 1,i,c2 as number))
+          }
+          break labelLookForAnotherSame
         }
-        if (activeEqualStart) {
-          newSelectionArr.push(new Selection(i,c2 as number,i,c1 as number + 1))
-        } else {
-          newSelectionArr.push(new Selection(i,c1 as number + 1,i,c2 as number))
-        }
+
+
       }
       activeEditor.selections = newSelectionArr
     }
