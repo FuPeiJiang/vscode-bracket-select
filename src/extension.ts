@@ -86,95 +86,124 @@ export function activate(context: ExtensionContext): void {
 
         labelLookForAnotherSame:
         while (true) {
-          let lookingFor,c1,c2,i1,i2
+          let found,lookingFor,c1,c2,i1,i2
 
           sameLineLabel:
           while (true) {
-            for (;leftC > lastLeft; leftC--) {
-
-              if (leftBracketObj[thisLine[leftC]] && !alreadyDoneObj[thisLine[leftC]]) {
-                lookingFor = leftBracketObj[thisLine[leftC]][1]
-                c1 = leftC,i1 = i
-                singleLine = leftBracketObj[thisLine[leftC]][0]
-                break sameLineLabel
-              } else if (rightBracketObj[thisLine[++rightC]] && !alreadyDoneObj[thisLine[rightC]]) {
-                lookingFor = rightBracketObj[thisLine[rightC]][1]
-                c2 = rightC,i2 = i
-                singleLine = rightBracketObj[thisLine[rightC]][0]
-                break sameLineLabel
-              }
-              d(thisLine[leftC],thisLine[rightC])
-            }
-            //both sides, multiline
-            let o1 = leftC + 1 //sigh
-              ,l1 = i,line1 = thisLine
-
-            let o2 = rightC,l2 = i,line2 = thisLine,numberOfChars2 = numberOfChars
+            let isLeftMulti: boolean
+            let o1,l1,line1
+              ,o2,l2,line2,numberOfChars2
+            findMatchingMulti:
             while (true) {
+              for (;leftC > lastLeft; leftC--) {
+
+                if (leftBracketObj[thisLine[leftC]] && !alreadyDoneObj[thisLine[leftC]]) {
+                  found = thisLine[leftC]
+                  lookingFor = leftBracketObj[found][1]
+                  c1 = leftC,i1 = i
+                  singleLine = leftBracketObj[found][0]
+                  if (!singleLine) {
+                    isLeftMulti = true
+                    l1 = i,o1 = leftC
+                    l2 = i,o2 = rightC
+                    break findMatchingMulti
+                  }
+                  break sameLineLabel
+                } else if (rightBracketObj[thisLine[++rightC]] && !alreadyDoneObj[thisLine[rightC]]) {
+                  found = thisLine[rightC]
+                  lookingFor = rightBracketObj[found][1]
+                  c2 = rightC,i2 = i
+                  singleLine = rightBracketObj[found][0]
+                  if (!singleLine) {
+                    isLeftMulti = false
+                    l1 = i,o1 = leftC
+                    l2 = i,o2 = rightC
+                    break findMatchingMulti
+                  }
+                  break sameLineLabel
+                }
+                d(thisLine[leftC],thisLine[rightC])
+              }
+              //both sides, multiline
+              o1 = leftC + 1,l1 = i,line1 = thisLine
+              ,o2 = rightC,l2 = i,line2 = thisLine,numberOfChars2 = numberOfChars
+
+              while (true) {
               //side left
-              if (--o1 === -1) {
-                if (--l1 === -1) {
-                  continue labelEachCursor
+                if (--o1 === -1) {
+                  if (--l1 === -1) {
+                    continue labelEachCursor
+                  }
+                  line1 = lines[l1],o1 = line1.length - 1
                 }
-                line1 = lines[l1],o1 = line1.length - 1
-              }
-              if (leftMultiObj[line1[o1]] && !alreadyDoneObj[line1[o1]]) {
+                if (leftMultiObj[line1[o1]] && !alreadyDoneObj[line1[o1]]) {
                 //found left, look for right
-                const found = line1[o1]
-                lookingFor = leftMultiObj[found]
+                  found = line1[o1]
+                  lookingFor = leftMultiObj[found]
 
-                let l = l2,o = o2 + 1,mLine = lines[l],numberOfChars = mLine.length
-
-                while (true) {
-                  while (o === numberOfChars) {
-                    if (++l === howManyLines) {
-                      alreadyDoneObj[found] = true
-                      continue labelLookForAnotherSame
-                    }
-                    o = 0,mLine = lines[l],numberOfChars = mLine.length //o could be 0 so loop it again
-                  }
-                  if (mLine[o] === lookingFor) {
-                    d(333)
-                    newSelectionArr.push(new Selection(l,o,l1,o1 + 1))
+                  isLeftMulti = true
+                  break findMatchingMulti
+                }
+                //side right
+                if (++o2 === numberOfChars2) {
+                  if (++l2 === howManyLines) {
                     continue labelEachCursor
                   }
-                  o++
+                  line2 = lines[l2],numberOfChars2 = line2.length,o2 = 0
+                }
+                if (rightMultiObj[line2[o2]] && !alreadyDoneObj[line2[o2]]) {
+                //found right, look for left
+                  found = line2[o2]
+                  lookingFor = rightMultiObj[found]
+
+                  isLeftMulti = false
+                  break findMatchingMulti
                 }
 
               }
-              //side right
-              if (++o2 === numberOfChars2) {
-                if (++l2 === howManyLines) {
+
+              //break sameLineLabel is being done by the above while(true)
+            }
+            //after break findMatchingMulti || after findMatchingMulti
+            if (isLeftMulti) {
+              //found left, look for right
+              let l = l2,o = o2 + 1,mLine = lines[l],numberOfChars = mLine.length
+
+              while (true) {
+                while (o === numberOfChars) {
+                  if (++l === howManyLines) {
+                    alreadyDoneObj[found] = true
+                    continue labelLookForAnotherSame
+                  }
+                  o = 0,mLine = lines[l],numberOfChars = mLine.length //o could be 0 so loop it again
+                }
+                if (mLine[o] === lookingFor) {
+                  d(333)
+                  newSelectionArr.push(new Selection(l,o,l1,o1 + 1))
                   continue labelEachCursor
                 }
-                line2 = lines[l2],numberOfChars2 = line2.length,o2 = 0
+                o++
               }
-              if (rightMultiObj[line2[o2]] && !alreadyDoneObj[line2[o2]]) {
-                //found right, look for left
-                const found = line2[o2]
-                lookingFor = rightMultiObj[found]
+            } else {
+              //found right, look for left
+              let l = l1,mLine = lines[l],o = o1
 
-                let l = l1,mLine = lines[l],o = o1
-
-                while (true) {
-                  while (o === -1) {
-                    if (--l === -1) {
-                      alreadyDoneObj[found] = true
-                      continue labelLookForAnotherSame
-                    }
-                    mLine = lines[l],o = mLine.length - 1
+              while (true) {
+                while (o === -1) {
+                  if (--l === -1) {
+                    alreadyDoneObj[found] = true
+                    continue labelLookForAnotherSame
                   }
-                  if (mLine[o] === lookingFor) {
-                    d(444)
-                    newSelectionArr.push(new Selection(l2,o2,l,o + 1))
-                    continue labelEachCursor
-                  }
-                  o--
+                  mLine = lines[l],o = mLine.length - 1
                 }
+                if (mLine[o] === lookingFor) {
+                  d(444)
+                  newSelectionArr.push(new Selection(l2,o2,l,o + 1))
+                  continue labelEachCursor
+                }
+                o--
               }
-
             }
-            //break sameLineLabel is being done by the above while(true)
           }
           labelFoundOtherSame:
           while (true) {
@@ -189,26 +218,9 @@ export function activate(context: ExtensionContext): void {
                     break labelFoundOtherSame
                   }
                 }
-                if (singleLine) {
-                  if (++rightBak < numberOfChars && rightBracketObj[thisLine[rightBak]] && !alreadyDoneObj[thisLine[rightBak]]) {
-                    lookingFor = rightBracketObj[thisLine[rightBak]][1]
-                    c2 = rightBak
-                  }
-                } else {
-                  let l = i,o
-                  while (++l < howManyLines) {
-                    const mLine = lines[l]
-                    const numberOfChars = mLine.length
-                    o = 0
-                    while (o < numberOfChars) {
-                      if (mLine[o] === lookingFor) {
-                        d(11111111111111111111111111)
-                        newSelectionArr.push(new Selection(l,o,i1 as number,c1 + 1))
-                        continue labelEachCursor
-                      }
-                      o++
-                    }
-                  }
+                if (++rightBak < numberOfChars && rightBracketObj[thisLine[rightBak]] && !alreadyDoneObj[thisLine[rightBak]]) {
+                  lookingFor = rightBracketObj[thisLine[rightBak]][1]
+                  c2 = rightBak
                 }
 
               }

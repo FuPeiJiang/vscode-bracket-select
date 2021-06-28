@@ -14,3 +14,21 @@
               }
               line1 = lines[l1],o1 = line1.length
             }
+
+2#)
+                if (!singleLine) {
+                  let l = i,o
+                  while (++l < howManyLines) {
+                    const mLine = lines[l]
+                    const numberOfChars = mLine.length
+                    o = 0
+                    while (o < numberOfChars) {
+                      if (mLine[o] === lookingFor) {
+                        d(11111111111111111111111111)
+                        newSelectionArr.push(new Selection(l,o,i1 as number,c1 + 1))
+                        continue labelEachCursor
+                      }
+                      o++
+                    }
+                  }
+                }
