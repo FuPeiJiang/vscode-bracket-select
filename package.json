@@ -47,6 +47,23 @@
 						"'",
 						"`"
 					]
+				},
+				"vscode-bracket-select.sameLineString": {
+					"type": "array",
+					"default": [
+						["\"","\""],
+						["'","'"],
+						["`","`"]
+					]
+				},
+				"vscode-bracket-select.multiLineString": {
+					"type": "array",
+					"default": [
+						["(", ")"],
+						["{", "}"],
+						["[", "]"],
+						["`", "`"]
+					]
 				}
 			}
 		}
