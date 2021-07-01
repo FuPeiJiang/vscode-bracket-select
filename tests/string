@@ -22,5 +22,6 @@ skip when looking for 2nd
 
 skip when looking for 1st
 
-[[]HEREaaaaaaaaa]
-[[]aaaaaaaaa]
+[[]HEREabcdef]
+[[]abcdef]
+[abcdef[]]
