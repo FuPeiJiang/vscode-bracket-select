@@ -1,0 +1,26 @@
+skip when looking for 2nd
+
+{"abcde}HERE"
+{"abcde}"
+
+{HERE"abcde}"}
+{"abcde}"}
+
+{"{abcde"}
+
+{HERE"abcde}"
+{"abcde}"
+}
+
+{
+  {
+    {
+      
+    }
+  }
+}
+
+skip when looking for 1st
+
+[[]HEREaaaaaaaaa]
+[[]aaaaaaaaa]

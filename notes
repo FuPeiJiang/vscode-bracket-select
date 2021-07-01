@@ -35,3 +35,24 @@ I'm NOT going to do that for multiline..
 soo, if one runs out of lines, it's out, easy, BREAK
 
 need to define quotes for strings, skip strings to not match bracket inside strings
+
+sameLine are strings, no need to skip strings
+even when looking for 1st multiLine, I need to skip strings
+for sameLine strings, to look for 2nd, I can use indexOf() instead of looping every char
+, if not exist.. get back
+
+after checking for sameLine, else if check for string,
+if not found 2nd, it's still a string.............
+we don't want parsing error
+
+looking for 2nd multiLine, I also need to skip strings
+
+{"okkkkk}HERE"
+sigh, just don't look for string when singleLine
+but what about
+[[]HEREaaaaaaaaa]
+
+sigh, check singleLine first, then multiLine.
+multiLine skip string
+
+default behavior for not found, is continue loop

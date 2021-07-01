@@ -7,11 +7,17 @@ export function activate(context: ExtensionContext): void {
 
   const sameLineSameBracketArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('sameLineSameBracket')
   const bracketPairsArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('bracketPairs')
+  const sameLineStringArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('sameLineString')
+  const multiLineStringArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('multiLineString')
   const leftBracketObj: stringIndexNumString = {}
   const rightBracketObj: stringIndexNumString = {}
-
+  // d(sameLineStringArr,multiLineStringArr)
   const leftMultiObj: stringIndexString = {}
   const rightMultiObj: stringIndexString = {}
+
+  const leftStringObj: stringIndexNumString = {}
+  const rightStringObj: stringIndexNumString = {}
+
   if (sameLineSameBracketArr) {
     for (let i = 0,len = sameLineSameBracketArr.length; i < len; i++) {
       leftBracketObj[sameLineSameBracketArr[i]] = [true,sameLineSameBracketArr[i]]
@@ -21,13 +27,29 @@ export function activate(context: ExtensionContext): void {
   if (bracketPairsArr) {
     for (let i = 0,len = bracketPairsArr.length; i < len; i++) {
       const pairArr = bracketPairsArr[i]
-      leftBracketObj[pairArr[0]] = [false,pairArr[1]]
-      rightBracketObj[pairArr[1]] = [false,pairArr[0]]
+      // leftBracketObj[pairArr[0]] = [false,pairArr[1]]
+      // rightBracketObj[pairArr[1]] = [false,pairArr[0]]
       leftMultiObj[pairArr[0]] = pairArr[1]
       rightMultiObj[pairArr[1]] = pairArr[0]
     }
   }
+  if (sameLineStringArr) {
+    for (let i = 0,len = sameLineStringArr.length; i < len; i++) {
+      const pairArr = sameLineStringArr[i]
+      leftStringObj[pairArr[1]] = [true,pairArr[0]]
+      rightStringObj[pairArr[0]] = [true,pairArr[1]]
+    }
+  }
+  if (multiLineStringArr) {
+    for (let i = 0,len = multiLineStringArr.length; i < len; i++) {
+      const pairArr = multiLineStringArr[i]
+      leftStringObj[pairArr[1]] = [false,pairArr[0]]
+      rightStringObj[pairArr[0]] = [false,pairArr[1]]
+
+    }
+  }
   d(leftBracketObj,rightBracketObj)
+  d(leftStringObj,rightStringObj)
 
   context.subscriptions.push(commands.registerCommand('vscode-bracket-select.helloWorld',() => {
 
@@ -125,8 +147,11 @@ export function activate(context: ExtensionContext): void {
                 d(thisLine[leftC],thisLine[rightC])
               }
               //both sides, multiline
-              o1 = leftC + 1,l1 = i,line1 = thisLine
-              ,o2 = rightC,l2 = i,line2 = thisLine,numberOfChars2 = numberOfChars
+              // o1 = leftC + 1,l1 = i,line1 = thisLine
+              // ,o2 = rightC,l2 = i,line2 = thisLine,numberOfChars2 = numberOfChars
+
+              o1 = c,l1 = i,line1 = thisLine
+              ,o2 = c - 1,l2 = i,line2 = thisLine,numberOfChars2 = numberOfChars
 
               while (true) {
               //side left
@@ -165,6 +190,8 @@ export function activate(context: ExtensionContext): void {
               //break sameLineLabel is being done by the above while(true)
             }
             //after break findMatchingMulti || after findMatchingMulti
+            const lookingForArr = [lookingFor]
+            let lastIdx = 0
             if (isLeftMulti) {
               //found left, look for right
               let l = l2,o = o2 + 1,mLine = lines[l],numberOfChars = mLine.length
@@ -177,10 +204,30 @@ export function activate(context: ExtensionContext): void {
                   }
                   o = 0,mLine = lines[l],numberOfChars = mLine.length //o could be 0 so loop it again
                 }
-                if (mLine[o] === lookingFor) {
-                  d(333)
-                  newSelectionArr.push(new Selection(l,o,l1,o1 + 1))
-                  continue labelEachCursor
+                if (mLine[o] === lookingForArr[lastIdx]) {
+                  if (lastIdx === 0) {
+                    d(333)
+                    newSelectionArr.push(new Selection(l,o,l1,o1 + 1))
+                    continue labelEachCursor
+                  } else {
+                    lastIdx--
+                    lookingForArr.pop()
+                  }
+
+                } else if (rightStringObj[mLine[o]]) {
+                  const foundArr = rightStringObj[mLine[o]]
+                  if (foundArr[0]) { //singleLine
+                    const index = mLine.indexOf(foundArr[1],o + 1)
+                    if (index !== -1) {
+                      o = index
+                    } else {
+                      continue labelLookForAnotherSame
+                    }
+                  } else { //multiline
+                    lastIdx++
+                    lookingForArr.push(foundArr[1])
+                  }
+
                 }
                 o++
               }
@@ -196,10 +243,28 @@ export function activate(context: ExtensionContext): void {
                   }
                   mLine = lines[l],o = mLine.length - 1
                 }
-                if (mLine[o] === lookingFor) {
-                  d(444)
-                  newSelectionArr.push(new Selection(l2,o2,l,o + 1))
-                  continue labelEachCursor
+                if (mLine[o] === lookingForArr[lastIdx]) {
+                  if (lastIdx === 0) {
+                    d(444)
+                    newSelectionArr.push(new Selection(l2,o2,l,o + 1))
+                    continue labelEachCursor
+                  } else {
+                    lastIdx--
+                    lookingForArr.pop()
+                  }
+                } else if (leftStringObj[mLine[o]]) {
+                  const foundArr = leftStringObj[mLine[o]]
+                  if (foundArr[0]) { //singleLine
+                    const index = mLine.lastIndexOf(foundArr[1],o - 1)
+                    if (index !== -1) {
+                      o = index
+                    } else {
+                      continue labelLookForAnotherSame
+                    }
+                  } else { //multiline
+                    lastIdx++
+                    lookingForArr.push(foundArr[1])
+                  }
                 }
                 o--
               }

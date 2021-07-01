@@ -52,8 +52,7 @@
 					"type": "array",
 					"default": [
 						["\"","\""],
-						["'","'"],
-						["`","`"]
+						["'","'"]
 					]
 				},
 				"vscode-bracket-select.multiLineString": {
