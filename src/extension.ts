@@ -152,8 +152,8 @@ export function activate(context: ExtensionContext): void {
               // o1 = leftC + 1,l1 = i,line1 = thisLine
               // ,o2 = rightC,l2 = i,line2 = thisLine,numberOfChars2 = numberOfChars
 
-              o1 = c,l1 = i,line1 = thisLine
-              ,o2 = c - 1,l2 = i,line2 = thisLine,numberOfChars2 = numberOfChars
+              o1 = c - 1,l1 = i,line1 = thisLine
+              ,o2 = c,l2 = i,line2 = thisLine,numberOfChars2 = numberOfChars
 
               const leftLookingForArr = []
               let leftLastIdx = -1
@@ -162,7 +162,7 @@ export function activate(context: ExtensionContext): void {
               while (true) {
               //side left
                 while (true) {
-                  if (--o1 === -1) {
+                  while (o1 === -1) {
                     if (--l1 === -1) {
                       continue labelEachCursor
                     }
@@ -192,6 +192,7 @@ export function activate(context: ExtensionContext): void {
                       leftLookingForArr.push(foundArr[1])
                     }
                   }
+                  --o1
                   if (leftLastIdx === -1) {
                     break
                   }
@@ -199,7 +200,7 @@ export function activate(context: ExtensionContext): void {
 
                 //side right
                 while (true) {
-                  if (++o2 === numberOfChars2) {
+                  while (o2 === numberOfChars2) {
                     if (++l2 === howManyLines) {
                       continue labelEachCursor
                     }
@@ -229,6 +230,7 @@ export function activate(context: ExtensionContext): void {
                       rightLookingForArr.push(foundArr[1])
                     }
                   }
+                  o2++
                   if (rightLastIdx === -1) {
                     break
                   }
@@ -243,7 +245,7 @@ export function activate(context: ExtensionContext): void {
             let lastIdx = 0
             if (isLeftMulti) {
               //found left, look for right
-              let l = l2,o = o2 + 1,mLine = lines[l],numberOfChars = mLine.length
+              let l = l2,o = o2,mLine = lines[l],numberOfChars = mLine.length
 
               while (true) {
                 while (o === numberOfChars) {
@@ -281,7 +283,7 @@ export function activate(context: ExtensionContext): void {
               }
             } else {
               //found right, look for left
-              let l = l1,mLine = lines[l],o = o1 - 1
+              let l = l1,mLine = lines[l],o = o1
 
               while (true) {
                 while (o === -1) {

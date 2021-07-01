@@ -1,0 +1,6 @@
+    for (let i = 0,len = multiLineStringArr.length; i < len; i++) {
+      const pairArr = multiLineStringArr[i]
+      leftStringObj[pairArr[1]] = [false,pairArr[0]]
+      rightStringObj[pairArr[0]] = [false,pairArr[1]]
+
+    }
