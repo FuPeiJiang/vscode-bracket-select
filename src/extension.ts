@@ -18,19 +18,22 @@ export function activate(context: ExtensionContext): void {
   const leftStringObj: stringIndexNumString = {}
   const rightStringObj: stringIndexNumString = {}
 
+  //for "check if already selected"
+  const anyLeftObj: stringIndexString = {}
+
   if (sameLineSameBracketArr) {
     for (let i = 0,len = sameLineSameBracketArr.length; i < len; i++) {
       leftBracketObj[sameLineSameBracketArr[i]] = [true,sameLineSameBracketArr[i]]
       rightBracketObj[sameLineSameBracketArr[i]] = [true,sameLineSameBracketArr[i]]
+      anyLeftObj[sameLineSameBracketArr[i]] = sameLineSameBracketArr[i]
     }
   }
   if (bracketPairsArr) {
     for (let i = 0,len = bracketPairsArr.length; i < len; i++) {
       const pairArr = bracketPairsArr[i]
-      // leftBracketObj[pairArr[0]] = [false,pairArr[1]]
-      // rightBracketObj[pairArr[1]] = [false,pairArr[0]]
       leftMultiObj[pairArr[0]] = pairArr[1]
       rightMultiObj[pairArr[1]] = pairArr[0]
+      anyLeftObj[pairArr[0]] = pairArr[1]
     }
   }
   if (sameLineStringArr) {
@@ -77,8 +80,8 @@ export function activate(context: ExtensionContext): void {
         //check if already selected, expand selection to the brackets
         const leftChar = lines[start.line][start.character - 1] //-1 because there will always be a char if selection {| -> go here |{
         const rightChar = lines[end.line][end.character]
-        if (leftBracketObj[leftChar]) {
-          if (leftBracketObj[leftChar][1] === rightChar) {
+        if (anyLeftObj[leftChar]) {
+          if (anyLeftObj[leftChar] === rightChar) {
             if (activeEqualStart) {
               newSelectionArr.push(new Selection(end.line,end.character + 1,start.line,start.character - 1))
             } else {
@@ -87,7 +90,6 @@ export function activate(context: ExtensionContext): void {
             continue labelEachCursor
           }
         }
-
 
         const alreadyDoneObj: stringIndexBool = {}
         let singleLine = true
