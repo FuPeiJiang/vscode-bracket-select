@@ -161,65 +161,76 @@ export function activate(context: ExtensionContext): void {
               let rightLastIdx = -1
               while (true) {
               //side left
-                if (--o1 === -1) {
-                  if (--l1 === -1) {
-                    continue labelEachCursor
-                  }
-                  line1 = lines[l1],o1 = line1.length - 1
-                }
-                if (leftMultiObj[line1[o1]] && !alreadyDoneObj[line1[o1]] && leftLastIdx === -1) {
-                //gonna go to -> found left, look for right
-                  found = line1[o1]
-                  lookingFor = leftMultiObj[found]
-
-                  isLeftMulti = true
-                  break findMatchingMulti
-                } else if (leftLastIdx !== -1 && line1[o1] === leftLookingForArr[leftLastIdx]) {
-                  leftLastIdx--
-                  leftLookingForArr.pop()
-                } else if (leftStringObj[line1[o1]]) {
-                  const foundArr = leftStringObj[line1[o1]]
-                  if (foundArr[0]) { //singleLine
-                    const index = line1.lastIndexOf(foundArr[1],o1 - 1)
-                    if (index !== -1) {
-                      o1 = index
-                    } else {
+                while (true) {
+                  if (--o1 === -1) {
+                    if (--l1 === -1) {
                       continue labelEachCursor
                     }
-                  } else { //multiline
-                    leftLastIdx++
-                    leftLookingForArr.push(foundArr[1])
+                    line1 = lines[l1],o1 = line1.length - 1
+                  }
+                  if (leftMultiObj[line1[o1]] && !alreadyDoneObj[line1[o1]] && leftLastIdx === -1) {
+                    //gonna go to -> found left, look for right
+                    found = line1[o1]
+                    lookingFor = leftMultiObj[found]
+
+                    isLeftMulti = true
+                    break findMatchingMulti
+                  } else if (leftLastIdx !== -1 && line1[o1] === leftLookingForArr[leftLastIdx]) {
+                    leftLastIdx--
+                    leftLookingForArr.pop()
+                  } else if (leftStringObj[line1[o1]]) {
+                    const foundArr = leftStringObj[line1[o1]]
+                    if (foundArr[0]) { //singleLine
+                      const index = line1.lastIndexOf(foundArr[1],o1 - 1)
+                      if (index !== -1) {
+                        o1 = index
+                      } else {
+                        continue labelEachCursor
+                      }
+                    } else { //multiline
+                      leftLastIdx++
+                      leftLookingForArr.push(foundArr[1])
+                    }
+                  }
+                  if (leftLastIdx === -1) {
+                    break
                   }
                 }
+
                 //side right
-                if (++o2 === numberOfChars2) {
-                  if (++l2 === howManyLines) {
-                    continue labelEachCursor
-                  }
-                  line2 = lines[l2],numberOfChars2 = line2.length,o2 = 0
-                }
-                if (rightMultiObj[line2[o2]] && !alreadyDoneObj[line2[o2]] && rightLastIdx === -1) {
-                //gonna go to -> found right, look for left
-                  found = line2[o2]
-                  lookingFor = rightMultiObj[found]
-
-                  isLeftMulti = false
-                  break findMatchingMulti
-                } else if (rightLastIdx !== -1 && line2[o2] === rightLookingForArr[rightLastIdx]) {
-                  rightLastIdx--
-                  rightLookingForArr.pop()
-                } else if (rightStringObj[line2[o2]]) {
-                  const foundArr = rightStringObj[line2[o2]]
-                  if (foundArr[0]) { //singleLine
-                    const index = line2.lastIndexOf(foundArr[1],o2 - 1)
-                    if (index !== -1) {
-                      o2 = index
-                    } else {
+                while (true) {
+                  if (++o2 === numberOfChars2) {
+                    if (++l2 === howManyLines) {
                       continue labelEachCursor
                     }
-                  } else { //multiline
-                    rightLastIdx++
-                    rightLookingForArr.push(foundArr[1])
+                    line2 = lines[l2],numberOfChars2 = line2.length,o2 = 0
+                  }
+                  if (rightMultiObj[line2[o2]] && !alreadyDoneObj[line2[o2]] && rightLastIdx === -1) {
+                    //gonna go to -> found right, look for left
+                    found = line2[o2]
+                    lookingFor = rightMultiObj[found]
+
+                    isLeftMulti = false
+                    break findMatchingMulti
+                  } else if (rightLastIdx !== -1 && line2[o2] === rightLookingForArr[rightLastIdx]) {
+                    rightLastIdx--
+                    rightLookingForArr.pop()
+                  } else if (rightStringObj[line2[o2]]) {
+                    const foundArr = rightStringObj[line2[o2]]
+                    if (foundArr[0]) { //singleLine
+                      const index = line2.lastIndexOf(foundArr[1],o2 - 1)
+                      if (index !== -1) {
+                        o2 = index
+                      } else {
+                        continue labelEachCursor
+                      }
+                    } else { //multiline
+                      rightLastIdx++
+                      rightLookingForArr.push(foundArr[1])
+                    }
+                  }
+                  if (rightLastIdx === -1) {
+                    break
                   }
                 }
 
@@ -251,7 +262,6 @@ export function activate(context: ExtensionContext): void {
                     lastIdx--
                     lookingForArr.pop()
                   }
-
                 } else if (rightStringObj[mLine[o]]) {
                   const foundArr = rightStringObj[mLine[o]]
                   if (foundArr[0]) { //singleLine
@@ -271,7 +281,7 @@ export function activate(context: ExtensionContext): void {
               }
             } else {
               //found right, look for left
-              let l = l1,mLine = lines[l],o = o1
+              let l = l1,mLine = lines[l],o = o1 - 1
 
               while (true) {
                 while (o === -1) {
