@@ -3,7 +3,9 @@ import type {ExtensionContext} from 'vscode'
 
 export function activate(context: ExtensionContext): void {
   const min = Math.min
-  const d = console.debug.bind(console)
+  function d(...text: (any)[]) {
+    console.debug(...text)
+  }
 
   const sameLineSameBracketArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('sameLineSameBracket')
   const bracketPairsArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('bracketPairs')

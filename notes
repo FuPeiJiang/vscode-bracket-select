@@ -56,3 +56,10 @@ sigh, check singleLine first, then multiLine.
 multiLine skip string
 
 default behavior for not found, is continue loop
+
+without uglify.js
+3.64 KiB
+with uglify.js
+3.6 KiB
+
+worth, jk
