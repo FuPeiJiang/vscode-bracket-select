@@ -1,9 +1,9 @@
 import {commands,window,workspace,Selection,Position} from 'vscode'
 import type {ExtensionContext} from 'vscode'
 
-import * as acorn from 'acorn'
-import * as walk from 'acorn-walk'
 import {parse} from '@typescript-eslint/typescript-estree'
+
+import walker from './walker'
 
 export function activate(context: ExtensionContext): void {
   const min = Math.min
@@ -88,46 +88,12 @@ export function activate(context: ExtensionContext): void {
         }
       }
 
+      const everything = walker(documentText)
 
-      /*
-      const selection = activeEditor.selection
-      const active = selection.active
-      const start = selection.start
-      const end = selection.end
-      const positionToIndex = createPositionToIndex()
-      const gotIndex = positionToIndex(active.line,active.character)
-      d(gotIndex)
-      const [startLine,startChar] = indexToPosition(gotIndex)
-      d([startLine,startChar])
-      const [endLine,endChar] = indexToPosition(gotIndex + 1)
-      // d([startLine,startChar])
-      d([endLine,endChar])
-      // activeEditor.selection = new Selection(startLine,startChar,startLine,startChar + 1)
-      // activeEditor.selection = new Selection(startLine,startChar - 1,startLine,startChar)
-      activeEditor.selection = new Selection(startLine,startChar,endLine,endChar)
-      return */
-
-      const parsed = parse(documentText,{ecmaVersion:2020,loc:true})
-
-      d(parsed)
-
-      /* walk.simple(parsed,{
-      // walk.simple(acorn.parse(documentText,{ecmaVersion:2020}),{
-        ObjectExpression(node) {
-          d(`Found a literal: ${node.start}, ${node.end}`)
-          const [startLine,startChar] = indexToPosition(node.start - 1)
-          const [endLine,endChar] = indexToPosition(node.end - 1)
-          // activeEditor.selections = [new Selection(startLine,startChar,startLine,startChar + 1),
-          // new Selection(endLine,endChar,endLine,endChar + 1)]
-          activeEditor.selection = new Selection(startLine,startChar + 1,endLine,endChar)
-        },
-      }) */
-      return
       labelEachCursor:
       for (let n = 0,len = selectionArr.length; n < len; n++) {
 
-        // const selection = selectionArr[n]
-        const selection = activeEditor.selection
+        const selection = selectionArr[n]
         const active = selection.active
         const start = selection.start
         const end = selection.end
@@ -151,7 +117,25 @@ export function activate(context: ExtensionContext): void {
           }
         }
 
-        acorn - walk
+        const positionToIndex = createPositionToIndex()
+        const index = positionToIndex(active.line,active.character)
+        let goodIndex
+        for (let i = 0,len = everything.length; i < len; i++) {
+          if (index > everything[i][1]) {
+            if (index < everything[i][2]) {
+              goodIndex = i
+            }
+            continue
+          }
+          break
+        }
+        if (goodIndex !== undefined) {
+          const [startLine,startChar] = indexToPosition(everything[goodIndex][1] + 1)
+          const [endLine,endChar] = indexToPosition(everything[goodIndex][2] - 1)
+          newSelectionArr.push(new Selection(startLine,startChar,endLine,endChar))
+        } else {
+          newSelectionArr.push(selection)
+        }
 
       }
       activeEditor.selections = newSelectionArr
