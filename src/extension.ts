@@ -1,17 +1,11 @@
-import {commands,window,workspace,Selection,Position} from 'vscode'
+import {commands,window,workspace,Selection} from 'vscode'
 import type {ExtensionContext} from 'vscode'
-
-import {parse} from '@typescript-eslint/typescript-estree'
 
 import walker from './walker'
 
 export function activate(context: ExtensionContext): void {
-  const min = Math.min
   function d(...text: (any)[]) {
     console.debug(...text)
-  }
-  function e(...text: (any)[]) {
-    //hgello
   }
 
   const bracketPairsArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('bracketPairs')
@@ -146,10 +140,4 @@ export function activate(context: ExtensionContext): void {
 // #types
 type stringIndexString = {
   [key: string]: string,
-}
-type stringIndexBool = {
-  [key: string]: boolean,
-}
-type stringIndexNumString = {
-  [key: string]: [boolean,string],
 }

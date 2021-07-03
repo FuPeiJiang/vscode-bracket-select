@@ -3,11 +3,11 @@ function d(...text: (any)[]) {
   console.debug(...text)
 }
 export default (toParse: string): [string,number,number][] => {
-  const everything = []
+  const everything: [string,number,number][] = []
 
   const tempArr = []
   let tempIdx = -1
-  let node = parse(toParse,{loc:true,range:true})
+  let node: any = parse(toParse,{loc:true,range:true})
 
   let subNode
 

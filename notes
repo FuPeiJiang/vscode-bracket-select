@@ -79,3 +79,7 @@ is there a faster way than iterating over each range ?
 the fastest way would be : make an array : mapping index to where it belongs
 [nowhere,[0,4],[1,3],[0,4],nowhere] 
 I'll read about binary search tree
+
+yarn ext
+Done in 114.65s
+WHAT
