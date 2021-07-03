@@ -1,0 +1,15 @@
+what's the difference between literal number and literal string ?
+right: {
+  type: 'Literal',
+  value: 'a',
+  raw: "'a'",
+  range: [ 2, 5 ],
+  loc: { start: [Object], end: [Object] }
+},
+right: {
+  type: 'Literal',
+  value: 2,
+  raw: '2',
+  range: [ 8, 9 ],
+  loc: { start: [Object], end: [Object] }
+},

@@ -89,7 +89,7 @@ export function activate(context: ExtensionContext): void {
       }
 
 
-      // const selection = selectionArr[n]
+      /*
       const selection = activeEditor.selection
       const active = selection.active
       const start = selection.start
@@ -105,13 +105,13 @@ export function activate(context: ExtensionContext): void {
       // activeEditor.selection = new Selection(startLine,startChar,startLine,startChar + 1)
       // activeEditor.selection = new Selection(startLine,startChar - 1,startLine,startChar)
       activeEditor.selection = new Selection(startLine,startChar,endLine,endChar)
-      return
+      return */
 
       const parsed = parse(documentText,{ecmaVersion:2020,loc:true})
 
       d(parsed)
 
-      walk.simple(parsed,{
+      /* walk.simple(parsed,{
       // walk.simple(acorn.parse(documentText,{ecmaVersion:2020}),{
         ObjectExpression(node) {
           d(`Found a literal: ${node.start}, ${node.end}`)
@@ -121,7 +121,7 @@ export function activate(context: ExtensionContext): void {
           // new Selection(endLine,endChar,endLine,endChar + 1)]
           activeEditor.selection = new Selection(startLine,startChar + 1,endLine,endChar)
         },
-      })
+      }) */
       return
       labelEachCursor:
       for (let n = 0,len = selectionArr.length; n < len; n++) {

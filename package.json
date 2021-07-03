@@ -99,7 +99,7 @@
 		}
 	},
 	"scripts": {
-		"typescript-esint": "ts-node-dev --respawn --transpile-only \"src/typescript-esint test.ts\"",
+		"typescript-eslint_Test": "ts-node-dev --respawn --transpile-only src/typescript-eslint_Test.ts",
 		"acornTest": "ts-node-dev --respawn --transpile-only \"src/acorn test.ts\"",
 		"ext": "webpack --mode production && vsce package -o vscode-bracket-select.vsix && code --install-extension vscode-bracket-select.vsix",
 		"vsix": "webpack --mode production && vsce package -o vscode-bracket-select.vsix",

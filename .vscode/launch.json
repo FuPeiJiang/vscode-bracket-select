@@ -6,6 +6,31 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "program": "${workspaceFolder}/src/typescript-eslint test.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      // "outFiles": ["${workspaceFolder}/out/**/*.js"]
+      "outFiles": ["${workspaceFolder}/out/**"]
+    },
+		{
+      "type": "node",
+      "request": "launch",
+      "name": "typescript-eslint",
+			"cwd": "${workspaceFolder}",
+      "runtimeExecutable": "ts-node-dev",
+      "runtimeArgs": [
+        "--respawn",
+        "--transpile-only",
+        "src/typescript-eslint test.ts",
+      ],
+      // "program": "${workspaceFolder}/src/typescript-eslint test.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/out/**"],
+			// "typescript-eslint": "ts-node-dev --respawn --transpile-only \"src/typescript-eslint test.ts\"",
+    },
+		{
 			"name": "Run Extension",
 			"type": "extensionHost",
 			"request": "launch",
@@ -29,6 +54,6 @@
 				"${workspaceFolder}/out/test/**/*.js"
 			],
 			"preLaunchTask": "npm: test-watch"
-		}
+		},
 	]
 }

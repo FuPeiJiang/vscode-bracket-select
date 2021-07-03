@@ -63,3 +63,8 @@ with uglify.js
 3.6 KiB
 
 worth, jk
+
+I did a bracket select inside commented code, I'm cursed now
+I don't want commented code to affect other code, 
+but if I'm already inside a commented code, I want to .txt parse it
+this is best for the look around strategy, right ?
