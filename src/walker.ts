@@ -76,7 +76,26 @@ export default (toParse: string): [string,number,number][] => {
         tempArr.push(node.init)
         tempIdx++
       }
+      tempArr.push(node.id)
+      tempIdx++
       break
+    case 'ObjectPattern': //let { a, b } = { a: 10, b: 20 }
+      everything.push(['ObjectPattern',node.range[0],node.range[1]])
+      subNode = node.properties
+      tempIdx += subNode.length
+      for (let i = subNode.length - 1; i > -1; i--) {
+        tempArr.push(subNode[i])
+      }
+      break
+    case 'ArrayPattern': //let [a, b] = [10, 20]
+      everything.push(['ArrayPattern',node.range[0],node.range[1]])
+      subNode = node.elements
+      tempIdx += subNode.length
+      for (let i = subNode.length - 1; i > -1; i--) {
+        tempArr.push(subNode[i])
+      }
+      break
+      elements
     case 'ExpressionStatement': //check if expressionStatement itself it wrapped in parentheses
       // d(node)
       subNode = node.expression

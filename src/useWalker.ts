@@ -21,7 +21,8 @@ toParse =
 // read(`${__dirname}/../tests/label`)
 // 'new Position(a,b)'
 // 'lines[start.line]'
-read(`${__dirname}/../tests/else`)
+// read(`${__dirname}/../tests/else`)
+read(`${__dirname}/../tests/Destructuring assignment`)
 
 const everything = walker(toParse)
 
