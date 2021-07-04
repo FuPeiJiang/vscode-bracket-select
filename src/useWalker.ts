@@ -20,7 +20,8 @@ toParse =
 // read(`${__dirname}/../tests/arrow func`)
 // read(`${__dirname}/../tests/label`)
 // 'new Position(a,b)'
-'lines[start.line]'
+// 'lines[start.line]'
+read(`${__dirname}/../tests/else`)
 
 const everything = walker(toParse)
 

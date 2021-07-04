@@ -214,7 +214,7 @@ export default (toParse: string): [string,number,number][] => {
       }
       break
     case 'IfStatement':
-    // d(node)
+      // d(node)
       subNode = node.test
       c1 = node.range[0] + 2 //'if'
       ,e1 = subNode.range[0],e2 = subNode.range[1],c2 = node.consequent.range[0]
@@ -230,8 +230,13 @@ export default (toParse: string): [string,number,number][] => {
           break nextParen
         }
       }
-      tempArr.push(node.consequent,subNode)
-      tempIdx += 2
+      if (node.alternate) {
+        tempArr.push(node.alternate,node.consequent,subNode)
+        tempIdx += 3
+      } else {
+        tempArr.push(node.consequent,subNode)
+        tempIdx += 2
+      }
       break
     case 'WhileStatement':
       subNode = node.test
