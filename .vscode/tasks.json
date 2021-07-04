@@ -4,20 +4,12 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "typescript",
-			"tsconfig": "tsconfig.json",
-			"problemMatcher": [
-				"$tsc"
-			],
-			"group": "build",
-			"label": "tsc: build - tsconfig.json"
-		},
-		{
 			"type": "npm",
 			"script": "watch",
 			"problemMatcher": [
                 "$ts-webpack-watch",
-                "$tslint-webpack-watch"
+                "$tslint-webpack-watch",
+								"$tsc-watch"
 			],
 			"isBackground": true,
 			"presentation": {
@@ -37,6 +29,6 @@
 				"reveal": "never"
 			},
 			"group": "build"
-		},
+		}
 	]
 }
