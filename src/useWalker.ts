@@ -14,9 +14,10 @@ toParse =
 // 'for (let i = 0, len = arr.length; i < len; i++) {  console.log(arr[i])}'
 // read(`${__dirname}/../tests/WhileStatement`)
 // read(`${__dirname}/../tests/types/stringIndexString`)
-read(`${__dirname}/../tests/types/stringIndexString2`)
+// read(`${__dirname}/../tests/types/stringIndexString2`)
 // read(`${__dirname}/../tests/types/string`)
 // read(`${__dirname}/../tests/types/arr string string`)
+read(`${__dirname}/../tests/arrow func`)
 
 const everything = walker(toParse)
 

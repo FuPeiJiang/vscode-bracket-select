@@ -142,7 +142,10 @@ export default (toParse: string): [string,number,number][] => {
       tempIdx += 2
       break
     case 'AssignmentExpression':
-    // d(node)
+      tempArr.push(node.right,node.left)
+      tempIdx += 2
+      break
+    case 'AssignmentPattern':
       tempArr.push(node.right,node.left)
       tempIdx += 2
       break
@@ -307,13 +310,47 @@ export default (toParse: string): [string,number,number][] => {
       tempIdx += 2
       break
     case 'arguments':
-      everything.push(['() function call',node.range[0],node.range[1]])
+      everything.push(['() function call',node.range[0],node.range[1] + 1])
 
       subNode = node.theStuff
       tempIdx += subNode.length
       for (let i = subNode.length - 1; i > -1; i--) {
         tempArr.push(subNode[i])
       }
+      break
+    case 'ArrowFunctionExpression':
+      //it's a definition
+      subNode = node.params
+      c1 = node.range[0],c2 = node.body.range[0] - 3//the arrow itself
+      if (subNode.length) {
+        e1 = subNode[0].range[0] - 1
+        ,e2 = subNode[subNode.length - 1].range[1]
+        nextParen:
+        for (; c1 < e1; c1++) {
+          if (toParse[c1] === '(') {
+            while (c2-- > e2) { //3rd of for is only executed after 1st time, //bruh, just use while loop
+              if (toParse[c2] === ')') {
+                everything.push(['() => {} definition',c1,c2 + 1])
+                continue nextParen
+              }
+            }
+            break nextParen
+          }
+        }
+      } else {
+        everything.push(['() => {} definition',
+          toParse.indexOf('(',c1),
+          toParse.lastIndexOf(')',c2) + 1])
+      }
+
+      tempIdx++
+      tempArr.push(node.body)
+
+      tempIdx += subNode.length
+      for (let i = 0,len = subNode.length; i < len; i++) {
+        tempArr.push(subNode[i])
+      }
+
       break
     case 'TSTypeAliasDeclaration':
       // d(node)
