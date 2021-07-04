@@ -5,10 +5,23 @@ import * as fs from 'fs'
 
 // console.log(__dirname)
 
+let toParse
+toParse = ''
 
-// const everything = walker(fs.readFileSync(`${__dirname}/extension.ts`).toString())
-// const everything = walker('if (a===b) {}')
-// const everything = walker('for (let i = 0, len = arr.length; i < len; i++) {  console.log(arr[i])}')
-const everything = walker(fs.readFileSync(`${__dirname}/../tests/WhileStatement`).toString())
+toParse =
+// read(`${__dirname}/extension.ts`)
+// 'if (a===b) {}'
+// 'for (let i = 0, len = arr.length; i < len; i++) {  console.log(arr[i])}'
+// read(`${__dirname}/../tests/WhileStatement`)
+// read(`${__dirname}/../tests/types/stringIndexString`)
+read(`${__dirname}/../tests/types/stringIndexString2`)
+// read(`${__dirname}/../tests/types/string`)
+// read(`${__dirname}/../tests/types/arr string string`)
+
+const everything = walker(toParse)
+
 console.log(everything)
 
+function read(path) {
+  return fs.readFileSync(path).toString()
+}

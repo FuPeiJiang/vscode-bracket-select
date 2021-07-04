@@ -1,0 +1,4 @@
+type stringIndexString = {
+  [key: string]: string;
+  okkk: number
+}

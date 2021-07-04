@@ -7,7 +7,7 @@ export default (toParse: string): [string,number,number][] => {
 
   const tempArr = []
   let tempIdx = -1
-  let node: any = parse(toParse,{loc:true,range:true})
+  let node: any = parse(toParse,{range:true})
 
   let subNode
 
@@ -19,7 +19,7 @@ export default (toParse: string): [string,number,number][] => {
     switch (node.type as string) {
     case 'Program':
       // body: nodes[]
-      d(node)
+      // d(node)
       subNode = node.body
       tempIdx += subNode.length
       for (let i = subNode.length - 1; i > -1; i--) {
@@ -316,18 +316,42 @@ export default (toParse: string): [string,number,number][] => {
       }
       break
     case 'TSTypeAliasDeclaration':
+      // d(node)
       tempIdx++
       tempArr.push(node.typeAnnotation)
       break
     case 'TSTypeLiteral':
+      everything.push(['TSTypeLiteral',node.range[0],node.range[1]])
       subNode = node.members
       tempIdx += subNode.length
       for (let i = subNode.length - 1; i > -1; i--) {
         tempArr.push(subNode[i])
       }
       break
+    case 'TSTupleType':
+      everything.push(['TSTupleType',node.range[0],node.range[1]])
+      subNode = node.elementTypes
+      tempIdx += subNode.length
+      for (let i = subNode.length - 1; i > -1; i--) {
+        tempArr.push(subNode[i])
+      }
+      break
     case 'TSIndexSignature':
-      d(node)
+      // d(node)
+      everything.push(['TSIndexSignature',node.range[0]
+      //get index of last parameter
+        ,toParse.indexOf(']',node.parameters[node.parameters.length - 1].range[1]) + 1,
+      ])
+      tempArr.push(node.typeAnnotation)
+      tempIdx++
+      break
+    case 'TSPropertySignature':
+      tempArr.push(node.typeAnnotation)
+      tempIdx++
+      break
+    case 'TSTypeAnnotation':
+      tempArr.push(node.typeAnnotation)
+      tempIdx++
       break
     }
 
