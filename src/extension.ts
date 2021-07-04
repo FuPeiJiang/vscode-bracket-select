@@ -86,7 +86,7 @@ export function activate(context: ExtensionContext): void {
 
       // d(123)
       const everything = walker(documentText)
-      d(everything)
+      // d(everything)
 
       labelEachCursor:
       for (let n = 0,len = selectionArr.length; n < len; n++) {

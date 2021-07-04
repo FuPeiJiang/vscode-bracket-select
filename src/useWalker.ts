@@ -17,7 +17,10 @@ toParse =
 // read(`${__dirname}/../tests/types/stringIndexString2`)
 // read(`${__dirname}/../tests/types/string`)
 // read(`${__dirname}/../tests/types/arr string string`)
-read(`${__dirname}/../tests/arrow func`)
+// read(`${__dirname}/../tests/arrow func`)
+// read(`${__dirname}/../tests/label`)
+// 'new Position(a,b)'
+'lines[start.line]'
 
 const everything = walker(toParse)
 

@@ -26,6 +26,10 @@ export default (toParse: string): [string,number,number][] => {
         tempArr.push(subNode[i])
       }
       break
+    case 'LabeledStatement':
+      tempArr.push(node.body)
+      tempIdx++
+      break
     case 'ImportDeclaration':
       tempArr.push(node.source)
       tempIdx++
@@ -68,11 +72,13 @@ export default (toParse: string): [string,number,number][] => {
       }
       break
     case 'VariableDeclarator': //Declarat{or|ion}
-      tempIdx++
-      tempArr.push(node.init)
+      if (node.init) {
+        tempArr.push(node.init)
+        tempIdx++
+      }
       break
     case 'ExpressionStatement': //check if expressionStatement itself it wrapped in parentheses
-    // d(node)
+      // d(node)
       subNode = node.expression
 
       c1 = node.range[0],e1 = subNode.range[0]
@@ -247,7 +253,6 @@ export default (toParse: string): [string,number,number][] => {
       tempIdx += 2
       break
     case 'ForStatement':
-      d(node.range[0])
       c1 = node.range[0] + 3 //'for'
       ,e1 = node.init.range[0],e2 = node.update.range[1],c2 = node.body.range[0]
       nextParen:
@@ -264,7 +269,6 @@ export default (toParse: string): [string,number,number][] => {
       }
       tempArr.push(node.body,node.update,node.test,node.init)
       tempIdx += 4
-      d(node)
       break
     case 'SwitchStatement':
     // d(node)
@@ -284,6 +288,7 @@ export default (toParse: string): [string,number,number][] => {
       break
     case 'MemberExpression':
       subNode = node.property
+      d(subNode)
       tempArr.push({type:'property',inside:subNode
         ,range:[subNode.range[0] - 1,subNode.range[1] + 1],
       }
@@ -291,10 +296,23 @@ export default (toParse: string): [string,number,number][] => {
       tempIdx += 2
       break
     case 'property':
-    // d(toParse.slice(node.range[0],node.range[1]))
-      everything.push(['property',node.range[0],node.range[1]])
+      // d(toParse.slice(node.range[0],node.range[1]))
+      // d(toParse[node.range[0]])
+      // d(toParse[node.range[1] - 1])
+      if (toParse[node.range[0]] === '[' && toParse[node.range[1] - 1] === ']') {
+        everything.push(['property',node.range[0],node.range[1]])
+      }
       tempIdx++
       tempArr.push(node.inside)
+      break
+    case 'NewExpression':
+      tempArr.push({type:'arguments',theStuff:node.arguments,
+        range:[
+          toParse.indexOf('(',node.callee.range[1])
+          ,toParse.lastIndexOf(')',node.range[1] - 1),
+        ]})
+      tempArr.push(node.callee)
+      tempIdx += 2
       break
     case 'CallExpression':
     // d(toParse[node.callee.range[1]])
@@ -310,7 +328,7 @@ export default (toParse: string): [string,number,number][] => {
       tempIdx += 2
       break
     case 'arguments':
-      everything.push(['() function call',node.range[0],node.range[1] + 1])
+      everything.push(['() function call or new Position()',node.range[0],node.range[1] + 1])
 
       subNode = node.theStuff
       tempIdx += subNode.length
