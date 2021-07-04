@@ -3,6 +3,8 @@ import type {ExtensionContext} from 'vscode'
 
 import walker from './walker'
 
+import React,{useState,useEffect} from 'react'
+
 export function activate(context: ExtensionContext): void {
   function d(...text: (any)[]) {
     console.debug(...text)
@@ -82,7 +84,9 @@ export function activate(context: ExtensionContext): void {
         }
       }
 
+      // d(123)
       const everything = walker(documentText)
+      d(everything)
 
       labelEachCursor:
       for (let n = 0,len = selectionArr.length; n < len; n++) {

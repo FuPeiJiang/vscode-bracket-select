@@ -19,12 +19,39 @@ export default (toParse: string): [string,number,number][] => {
     switch (node.type as string) {
     case 'Program':
       // body: nodes[]
-      // d(node)
+      d(node)
       subNode = node.body
       tempIdx += subNode.length
       for (let i = subNode.length - 1; i > -1; i--) {
         tempArr.push(subNode[i])
       }
+      break
+    case 'ImportDeclaration':
+      tempArr.push(node.source)
+      tempIdx++
+
+      subNode = node.specifiers
+      for (let i = subNode.length - 1; i > -1; i--) {
+        if (subNode[i].type === 'ImportSpecifier') {
+          //remember, this is reversed iteration
+          const e2 = subNode[i].range[1]
+          let e1
+          for (let n = 0,len = subNode.length; n < len; n++) {
+            if (subNode[n].type === 'ImportSpecifier') {
+              e1 = subNode[n].range[0]
+              break
+            }
+          }
+          everything.push(['ImportSpecifier',
+            toParse.lastIndexOf('{',e1 - 1),
+            toParse.indexOf('}',e2) + 1])
+          break
+        }
+      }
+      break
+    case 'ExportNamedDeclaration':
+      tempIdx++
+      tempArr.push(node.declaration)
       break
     case 'SequenceExpression':
       subNode = node.expressions
@@ -94,7 +121,7 @@ export default (toParse: string): [string,number,number][] => {
       }
       //do the !==
       subNode = node.right
-      c1 = operatorIndex + 1,e1 = subNode.range[0]
+      c1 = operatorIndex + node.operator.length,e1 = subNode.range[0]
       ,e2 = subNode.range[1],c2 = node.range[1]
       if (c1 !== e1 && e2 !== c2) {
         nextParen:
@@ -143,7 +170,7 @@ export default (toParse: string): [string,number,number][] => {
       // d(toParse[subNode.range[0] - 1])
       // d(toParse[toParse.lastIndexOf(')',subNode.range[0] - 1)])
       everything.push(['() function definition',toParse.indexOf('(',node.id.range[1])
-        ,toParse.lastIndexOf(')',subNode.range[0] - 1),
+        ,toParse.lastIndexOf(')',subNode.range[0] - 1) + 1,
       ])
       break
     case 'BlockStatement':
@@ -180,15 +207,61 @@ export default (toParse: string): [string,number,number][] => {
     case 'IfStatement':
     // d(node)
       subNode = node.test
-      everything.push(['if test',subNode.range[0],subNode.range[1]])
-      tempIdx++
-      tempArr.push(node.consequent)
+      c1 = node.range[0] + 2 //'if'
+      ,e1 = subNode.range[0],e2 = subNode.range[1],c2 = node.consequent.range[0]
+      nextParen:
+      for (; c1 < e1; c1++) {
+        if (toParse[c1] === '(') {
+          while (c2-- > e2) { //3rd of for is only executed after 1st time, //bruh, just use while loop
+            if (toParse[c2] === ')') {
+              everything.push(['if ()',c1,c2 + 1])
+              continue nextParen
+            }
+          }
+          break nextParen
+        }
+      }
+      tempArr.push(node.consequent,subNode)
+      tempIdx += 2
       break
     case 'WhileStatement':
-      subNode = node.body
-      everything.push(['while test',subNode.range[0],subNode.range[1]])
-      tempIdx++
-      tempArr.push(node.consequent)
+      subNode = node.test
+      c1 = node.range[0] + 5 //'while'
+      ,e1 = subNode.range[0],e2 = subNode.range[1],c2 = node.body.range[0]
+      nextParen:
+      for (; c1 < e1; c1++) {
+        if (toParse[c1] === '(') {
+          while (c2-- > e2) { //3rd of for is only executed after 1st time, //bruh, just use while loop
+            if (toParse[c2] === ')') {
+              everything.push(['while ()',c1,c2 + 1])
+              continue nextParen
+            }
+          }
+          break nextParen
+        }
+      }
+      tempArr.push(node.body,subNode)
+      tempIdx += 2
+      break
+    case 'ForStatement':
+      d(node.range[0])
+      c1 = node.range[0] + 3 //'for'
+      ,e1 = node.init.range[0],e2 = node.update.range[1],c2 = node.body.range[0]
+      nextParen:
+      for (; c1 < e1; c1++) {
+        if (toParse[c1] === '(') {
+          while (c2-- > e2) { //3rd of for is only executed after 1st time, //bruh, just use while loop
+            if (toParse[c2] === ')') {
+              everything.push(['while ()',c1,c2 + 1])
+              continue nextParen
+            }
+          }
+          break nextParen
+        }
+      }
+      tempArr.push(node.body,node.update,node.test,node.init)
+      tempIdx += 4
+      d(node)
       break
     case 'SwitchStatement':
     // d(node)
@@ -241,6 +314,20 @@ export default (toParse: string): [string,number,number][] => {
       for (let i = subNode.length - 1; i > -1; i--) {
         tempArr.push(subNode[i])
       }
+      break
+    case 'TSTypeAliasDeclaration':
+      tempIdx++
+      tempArr.push(node.typeAnnotation)
+      break
+    case 'TSTypeLiteral':
+      subNode = node.members
+      tempIdx += subNode.length
+      for (let i = subNode.length - 1; i > -1; i--) {
+        tempArr.push(subNode[i])
+      }
+      break
+    case 'TSIndexSignature':
+      d(node)
       break
     }
 
