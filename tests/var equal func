@@ -1,0 +1,6 @@
+v = function(){
+}
+b = function(a:[  ],b=[ {  } ]){
+}
+c = function(b=[ {  } ],a:[  ]){
+}

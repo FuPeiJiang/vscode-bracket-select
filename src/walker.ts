@@ -108,8 +108,10 @@ export default (toParse: string): [string,number,number][] => {
       tempIdx++
       break
     case 'Identifier':
-      tempArr.push(node.typeAnnotation)
-      tempIdx++
+      if (node.typeAnnotation) {
+        tempArr.push(node.typeAnnotation)
+        tempIdx++
+      }
       break
     case 'ObjectPattern': //let { a, b } = { a: 10, b: 20 }
       everything.push(['ObjectPattern',node.range[0],node.range[1]])
@@ -221,17 +223,21 @@ export default (toParse: string): [string,number,number][] => {
       tempArr.push(node.value,node.key)
       break
     case 'FunctionDeclaration':
-    // d(node)
-      subNode = node.body
+      tempArr.push(node.body)
       tempIdx++
-      tempArr.push(subNode)
       // d('BRUH')
       // d(toParse[node.id.range[1]])
       // d(toParse[subNode.range[0] - 1])
       // d(toParse[toParse.lastIndexOf(')',subNode.range[0] - 1)])
       everything.push(['() function definition',toParse.indexOf('(',node.id.range[1])
-        ,toParse.lastIndexOf(')',subNode.range[0] - 1) + 1,
+        ,toParse.lastIndexOf(')',node.body.range[0] - 1) + 1,
       ])
+
+      subNode = node.params
+      for (let i = subNode.length - 1; i > -1; i--) {
+        tempArr.push(subNode[i])
+      }
+      tempIdx += subNode.length
       break
     case 'BlockStatement':
       everything.push(['BlockStatement',node.range[0],node.range[1]])
@@ -331,14 +337,14 @@ export default (toParse: string): [string,number,number][] => {
       everything.push(['switch discriminant',node.discriminant.range[0],node.discriminant.range[1]])
       subNode = node.cases
       tempIdx += subNode.length
-      for (let i = 0,len = subNode.length; i < len; i++) {
+      for (let i = subNode.length - 1; i > -1; i--) {
         tempArr.push(subNode[i])
       }
       break
     case 'SwitchCase':
       subNode = node.consequent
       tempIdx += subNode.length
-      for (let i = 0,len = subNode.length; i < len; i++) {
+      for (let i = subNode.length - 1; i > -1; i--) {
         tempArr.push(subNode[i])
       }
       break
@@ -421,10 +427,23 @@ export default (toParse: string): [string,number,number][] => {
       tempArr.push(node.body)
 
       tempIdx += subNode.length
-      for (let i = 0,len = subNode.length; i < len; i++) {
+      for (let i = subNode.length - 1; i > -1; i--) {
         tempArr.push(subNode[i])
       }
 
+      break
+    case 'FunctionExpression':
+      tempArr.push(node.body)
+      tempIdx++
+      everything.push(['function() definition FunctionExpression',toParse.indexOf('(',node.range[0] + 8) //'function' is 8 characters
+        ,toParse.lastIndexOf(')',node.body.range[0] - 1) + 1,
+      ])
+
+      subNode = node.params
+      for (let i = subNode.length - 1; i > -1; i--) {
+        tempArr.push(subNode[i])
+      }
+      tempIdx += subNode.length
       break
     case 'TSTypeAliasDeclaration':
       // d(node)
