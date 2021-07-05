@@ -1,1 +1,1 @@
-`${text}${wsText || '  '}`
+`${text}${  wsText || '  '  } ${text}${text}`

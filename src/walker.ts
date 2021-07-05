@@ -9,7 +9,7 @@ export default (toParse: string): [string,number,number][] => {
   let tempIdx = -1
   let node: any = parse(toParse,{range:true})
 
-  let subNode
+  let subNode,subNode2
 
   let c1,e1,e2,c2
 
@@ -274,13 +274,15 @@ export default (toParse: string): [string,number,number][] => {
       break
     case 'TemplateLiteral':
       everything.push(['`',node.range[0],node.range[1]])
+      subNode2 = node.quasis
       subNode = node.expressions
       tempIdx += 2 * subNode.length
       for (let i = subNode.length - 1; i > -1; i--) {
         tempArr.push(subNode[i])
+        // d(subNode2[i])
         tempArr.push({type:'${} TemplateLiteral',
-          range0:subNode[i].range[0] - 1,
-          range1:subNode[i].range[1] + 1,
+          range0:subNode2[i].range[1] - 1,
+          range1:subNode2[i + 1].range[0] + 1,
         })
       }
       break
