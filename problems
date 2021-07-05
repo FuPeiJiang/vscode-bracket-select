@@ -3,3 +3,5 @@ export default () => {
 }
 
 const rangeAndReplaceTextArr: [[[number,number],[number,number]],string][] = []
+
+if (c < numberOfChars && lines[i][c] === ')') {

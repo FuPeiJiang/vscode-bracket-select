@@ -12,6 +12,8 @@ export default (toParse: string): [string,number,number][] => {
   let subNode
 
   let c1,e1,e2,c2
+
+  let operatorIndex
   // if (c1 !== e1 && e2 !== c2) {
 
   outer:
@@ -159,9 +161,50 @@ export default (toParse: string): [string,number,number][] => {
       // d(node)
 
       subNode = node.left
-      const operatorIndex = toParse.indexOf(node.operator,subNode.range[1])
+      operatorIndex = toParse.indexOf(node.operator,subNode.range[1])
       // d(2342343)
       // d(toParse[subNode.range[1]]) //lands on the +
+      c1 = node.range[0],e1 = subNode.range[0]
+      ,e2 = subNode.range[1],c2 = operatorIndex
+      if (c1 !== e1 && e2 !== c2) {
+        nextParen:
+        for (; c1 < e1; c1++) {
+          if (toParse[c1] === '(') {
+            while (c2-- > e2) { //3rd of for is only executed after 1st time, //bruh, just use while loop
+              if (toParse[c2] === ')') {
+                everything.push(['ParenthesizedExpression',c1,c2 + 1])
+                continue nextParen
+              }
+            }
+            break nextParen
+          }
+        }
+      }
+      //do the !==
+      subNode = node.right
+      c1 = operatorIndex + node.operator.length,e1 = subNode.range[0]
+      ,e2 = subNode.range[1],c2 = node.range[1]
+      if (c1 !== e1 && e2 !== c2) {
+        nextParen:
+        for (; c1 < e1; c1++) {
+          if (toParse[c1] === '(') {
+            while (c2-- > e2) { //3rd of for is only executed after 1st time, //bruh, just use while loop
+              if (toParse[c2] === ')') {
+                everything.push(['ParenthesizedExpression',c1,c2 + 1])
+                continue nextParen
+              }
+            }
+            break nextParen
+          }
+        }
+      }
+
+      tempArr.push(node.right,node.left)
+      tempIdx += 2
+      break
+    case 'LogicalExpression':
+      subNode = node.left
+      operatorIndex = toParse.indexOf(node.operator,subNode.range[1])
       c1 = node.range[0],e1 = subNode.range[0]
       ,e2 = subNode.range[1],c2 = operatorIndex
       if (c1 !== e1 && e2 !== c2) {
@@ -271,7 +314,7 @@ export default (toParse: string): [string,number,number][] => {
       }
       break
     case 'IfStatement':
-      // d(node)
+      d(node)
       subNode = node.test
       c1 = node.range[0] + 2 //'if'
       ,e1 = subNode.range[0],e2 = subNode.range[1],c2 = node.consequent.range[0]

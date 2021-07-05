@@ -26,7 +26,8 @@ toParse =
 // read(`${__dirname}/../../ahk_parser.js/src/parser/index.ts`)
 // read(`${__dirname}/../tests/export default paren`)
 // read(`${__dirname}/../tests/array`)
-read(`${__dirname}/../tests/var equal func`)
+// read(`${__dirname}/../tests/var equal func`)
+read(`${__dirname}/../tests/if and`)
 // read(`${__dirname}/../tests/`)
 // read(`${__dirname}/../tests/`)
 
