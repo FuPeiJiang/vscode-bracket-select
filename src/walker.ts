@@ -273,11 +273,19 @@ export default (toParse: string): [string,number,number][] => {
       }
       break
     case 'TemplateLiteral':
+      everything.push(['`',node.range[0],node.range[1]])
       subNode = node.expressions
-      tempIdx += subNode.length
+      tempIdx += 2 * subNode.length
       for (let i = subNode.length - 1; i > -1; i--) {
         tempArr.push(subNode[i])
+        tempArr.push({type:'${} TemplateLiteral',
+          range0:subNode[i].range[0] - 1,
+          range1:subNode[i].range[1] + 1,
+        })
       }
+      break
+    case '${} TemplateLiteral':
+      everything.push([node.type,node.range0,node.range1])
       break
     case 'IfStatement':
       // d(node)
