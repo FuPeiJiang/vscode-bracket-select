@@ -210,6 +210,7 @@ export default (toParse: string): [string,number,number][] => {
       everything.push(['ParenthesizedExpression',node.range[0],node.range[1]])
       break
     case 'AssignmentExpression':
+      d(node)
       tempArr.push(node.right,node.left)
       tempIdx += 2
       break
@@ -368,6 +369,7 @@ export default (toParse: string): [string,number,number][] => {
       }
       break
     case 'MemberExpression':
+      d(node)
       subNode = node.property
       // d(subNode)
       tempArr.push({type:'property',inside:subNode
@@ -396,10 +398,11 @@ export default (toParse: string): [string,number,number][] => {
       tempIdx += 2
       break
     case 'CallExpression':
-    // d(toParse[node.callee.range[1]])
-    // d(toParse[node.range[1] - 1])
-    // d(toParse[toParse.indexOf('(',node.callee.range[1])])
-    // d(toParse[toParse.lastIndexOf(')',node.range[1] - 1)])
+      // d(node)
+      // d(toParse[node.callee.range[1]])
+      // d(toParse[node.range[1] - 1])
+      // d(toParse[toParse.indexOf('(',node.callee.range[1])])
+      // d(toParse[toParse.lastIndexOf(')',node.range[1] - 1)])
       tempArr.push({type:'arguments',theStuff:node.arguments,
         range:[
           toParse.indexOf('(',node.callee.range[1])

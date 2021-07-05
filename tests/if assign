@@ -1,0 +1,2 @@
+if ((extendsText = 'E').toLowerCase() === 'ok') {
+}

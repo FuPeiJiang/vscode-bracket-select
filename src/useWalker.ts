@@ -29,7 +29,8 @@ toParse =
 // read(`${__dirname}/../tests/var equal func`)
 // read(`${__dirname}/../tests/if and`)
 // read(`${__dirname}/../tests/if compare`)
-read(`${__dirname}/../tests/templateLiteral`)
+// read(`${__dirname}/../tests/templateLiteral`)
+read(`${__dirname}/../tests/if assign`)
 // read(`${__dirname}/../tests/`)
 // read(`${__dirname}/../tests/`)
 
