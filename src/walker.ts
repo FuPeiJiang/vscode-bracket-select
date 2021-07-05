@@ -158,8 +158,8 @@ export default (toParse: string): [string,number,number][] => {
       tempArr.push(subNode)
       break
     case 'BinaryExpression': //check if either left right is wrapped in parentheses
+    case 'LogicalExpression': //wow, you can stack them : https://stackoverflow.com/questions/18412936/or-operator-in-switch-case#18412971
       // d(node)
-
       subNode = node.left
       operatorIndex = toParse.indexOf(node.operator,subNode.range[1])
       // d(2342343)
@@ -180,6 +180,9 @@ export default (toParse: string): [string,number,number][] => {
           }
         }
       }
+
+      tempArr.push(node.right)
+
       //do the !==
       subNode = node.right
       c1 = operatorIndex + node.operator.length,e1 = subNode.range[0]
@@ -190,7 +193,8 @@ export default (toParse: string): [string,number,number][] => {
           if (toParse[c1] === '(') {
             while (c2-- > e2) { //3rd of for is only executed after 1st time, //bruh, just use while loop
               if (toParse[c2] === ')') {
-                everything.push(['ParenthesizedExpression',c1,c2 + 1])
+                tempArr.push({type:'ParenthesizedExpression',range:[c1,c2 + 1]})
+                tempIdx++
                 continue nextParen
               }
             }
@@ -199,49 +203,11 @@ export default (toParse: string): [string,number,number][] => {
         }
       }
 
-      tempArr.push(node.right,node.left)
+      tempArr.push(node.left)
       tempIdx += 2
       break
-    case 'LogicalExpression':
-      subNode = node.left
-      operatorIndex = toParse.indexOf(node.operator,subNode.range[1])
-      c1 = node.range[0],e1 = subNode.range[0]
-      ,e2 = subNode.range[1],c2 = operatorIndex
-      if (c1 !== e1 && e2 !== c2) {
-        nextParen:
-        for (; c1 < e1; c1++) {
-          if (toParse[c1] === '(') {
-            while (c2-- > e2) { //3rd of for is only executed after 1st time, //bruh, just use while loop
-              if (toParse[c2] === ')') {
-                everything.push(['ParenthesizedExpression',c1,c2 + 1])
-                continue nextParen
-              }
-            }
-            break nextParen
-          }
-        }
-      }
-      //do the !==
-      subNode = node.right
-      c1 = operatorIndex + node.operator.length,e1 = subNode.range[0]
-      ,e2 = subNode.range[1],c2 = node.range[1]
-      if (c1 !== e1 && e2 !== c2) {
-        nextParen:
-        for (; c1 < e1; c1++) {
-          if (toParse[c1] === '(') {
-            while (c2-- > e2) { //3rd of for is only executed after 1st time, //bruh, just use while loop
-              if (toParse[c2] === ')') {
-                everything.push(['ParenthesizedExpression',c1,c2 + 1])
-                continue nextParen
-              }
-            }
-            break nextParen
-          }
-        }
-      }
-
-      tempArr.push(node.right,node.left)
-      tempIdx += 2
+    case 'ParenthesizedExpression':
+      everything.push(['ParenthesizedExpression',node.range[0],node.range[1]])
       break
     case 'AssignmentExpression':
       tempArr.push(node.right,node.left)
@@ -314,7 +280,7 @@ export default (toParse: string): [string,number,number][] => {
       }
       break
     case 'IfStatement':
-      d(node)
+      // d(node)
       subNode = node.test
       c1 = node.range[0] + 2 //'if'
       ,e1 = subNode.range[0],e2 = subNode.range[1],c2 = node.consequent.range[0]
