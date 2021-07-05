@@ -1,0 +1,3 @@
+//const a: [[[number,number],[number,number]],string][  ] = []
+const b: [number,number][  ][    ] = []
+//const c: Array<Array<number, number>> = []

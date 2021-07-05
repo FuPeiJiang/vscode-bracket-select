@@ -22,7 +22,12 @@ toParse =
 // 'new Position(a,b)'
 // 'lines[start.line]'
 // read(`${__dirname}/../tests/else`)
-read(`${__dirname}/../tests/Destructuring assignment`)
+// read(`${__dirname}/../tests/Destructuring assignment`)
+// read(`${__dirname}/../../ahk_parser.js/src/parser/index.ts`)
+// read(`${__dirname}/../tests/export default paren`)
+read(`${__dirname}/../tests/array`)
+// read(`${__dirname}/../tests/`)
+// read(`${__dirname}/../tests/`)
 
 const everything = walker(toParse)
 

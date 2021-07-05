@@ -16,6 +16,7 @@ export default (toParse: string): [string,number,number][] => {
 
   outer:
   while (true) {
+    // d(node)
     switch (node.type as string) {
     case 'Program':
       // body: nodes[]
@@ -54,8 +55,34 @@ export default (toParse: string): [string,number,number][] => {
       }
       break
     case 'ExportNamedDeclaration':
-      tempIdx++
+      if (node.declaration) {
+        tempArr.push(node.declaration)
+        tempIdx++
+      }
+
+      subNode = node.specifiers
+      for (let i = subNode.length - 1; i > -1; i--) {
+        if (subNode[i].type === 'ExportSpecifier') {
+          //remember, this is reversed iteration
+          const e2 = subNode[i].range[1]
+          let e1
+          for (let n = 0,len = subNode.length; n < len; n++) {
+            if (subNode[n].type === 'ExportSpecifier') {
+              e1 = subNode[n].range[0]
+              break
+            }
+          }
+          everything.push(['ExportSpecifier',
+            toParse.lastIndexOf('{',e1 - 1),
+            toParse.indexOf('}',e2) + 1])
+          break
+        }
+      }
+
+      break
+    case 'ExportDefaultDeclaration':
       tempArr.push(node.declaration)
+      tempIdx++
       break
     case 'SequenceExpression':
       subNode = node.expressions
@@ -72,11 +99,16 @@ export default (toParse: string): [string,number,number][] => {
       }
       break
     case 'VariableDeclarator': //Declarat{or|ion}
+      // d(node)
       if (node.init) {
         tempArr.push(node.init)
         tempIdx++
       }
       tempArr.push(node.id)
+      tempIdx++
+      break
+    case 'Identifier':
+      tempArr.push(node.typeAnnotation)
       tempIdx++
       break
     case 'ObjectPattern': //let { a, b } = { a: 10, b: 20 }
@@ -312,7 +344,7 @@ export default (toParse: string): [string,number,number][] => {
       break
     case 'MemberExpression':
       subNode = node.property
-      d(subNode)
+      // d(subNode)
       tempArr.push({type:'property',inside:subNode
         ,range:[subNode.range[0] - 1,subNode.range[1] + 1],
       }
@@ -365,7 +397,7 @@ export default (toParse: string): [string,number,number][] => {
       subNode = node.params
       c1 = node.range[0],c2 = node.body.range[0] - 3//the arrow itself
       if (subNode.length) {
-        e1 = subNode[0].range[0] - 1
+        e1 = subNode[0].range[0]
         ,e2 = subNode[subNode.length - 1].range[1]
         nextParen:
         for (; c1 < e1; c1++) {
@@ -415,8 +447,22 @@ export default (toParse: string): [string,number,number][] => {
         tempArr.push(subNode[i])
       }
       break
+    case 'TSArrayType': //trailing [] in number[]
+      // d(toParse[node.elementType.range[1]])
+      // d(toParse[node.range[1] - 1])
+      tempArr.push({
+        type:'TSArrayType trailing []',
+        range:[ toParse.indexOf('[',node.elementType.range[1]),
+          toParse.lastIndexOf(']',node.range[1] - 1) + 1,
+        ],
+      })
+      tempArr.push(node.elementType)
+      tempIdx += 2
+      break
+    case 'TSArrayType trailing []':
+      everything.push(['TSArrayType trailing []',node.range[0],node.range[1]])
+      break
     case 'TSIndexSignature':
-      // d(node)
       everything.push(['TSIndexSignature',node.range[0]
       //get index of last parameter
         ,toParse.indexOf(']',node.parameters[node.parameters.length - 1].range[1]) + 1,
