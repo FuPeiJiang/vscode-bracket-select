@@ -70,7 +70,7 @@ const parsed = parse(toParse,{loc:true,range:true})
 */
 const everything = []
 
-const nodeArr = [parsed]
+const nodeArr: any = [parsed]
 let idx = 0
 const tempArr = []
 let tempIdx = -1
