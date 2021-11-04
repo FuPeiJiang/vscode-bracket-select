@@ -1,4 +1,6 @@
 import {parse} from '@typescript-eslint/typescript-estree'
+import * as ts from 'typescript'
+
 function d(...text: (any)[]) {
   console.debug(...text)
 }
@@ -7,8 +9,10 @@ export default (toParse: string): [string,number,number][] => {
 
   const tempArr = []
   let tempIdx = -1
-  let node: any = parse(toParse,{range:true})
-
+  // let node: any = parse(toParse,{range:true})
+  // let node: any = parse(toParse,{range:true})
+  let node = ts.createSourceFile('',toParse,ts.ScriptTarget.Latest,true)
+  d(node.statements)
   let subNode,subNode2
 
   let c1,e1,e2,c2

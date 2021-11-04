@@ -2,7 +2,6 @@ import walker from './walker'
 import * as fs from 'fs'
 // https://stackoverflow.com/questions/43622337/using-import-fs-from-fs#43622386
 
-
 // console.log(__dirname)
 
 let toParse
@@ -35,6 +34,7 @@ read(`${__dirname}/../tests/if assign`)
 // read(`${__dirname}/../tests/`)
 
 const everything = walker(toParse)
+
 
 console.log(everything)
 
