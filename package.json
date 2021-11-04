@@ -113,7 +113,8 @@
 		"pretest": "yarn run test-compile && yarn run lint",
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js",
-		"watch" : "yarn tsc -w"
+		"watch" : "yarn tsc -w",
+		"build" : "yarn tsc --incremental false"
 	},
 	"devDependencies": {
 		"@types/node": "^16.11.6",
