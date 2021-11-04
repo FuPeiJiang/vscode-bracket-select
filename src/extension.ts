@@ -9,6 +9,11 @@ export function activate(context: ExtensionContext): void {
     function d(...text: (any)[]) {
         console.debug(...text)
     }
+    function HrTime_diffToMs(diff: [number,number]) {
+        // d(diff)
+        // return diff[0] * 1000000 + diff[1] / 1000000
+        return `${diff[0] * 1000 + diff[1] / 1000000}ms`
+    }
 
     const bracketPairsArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('bracketPairs')
     const sameLineStringArr: string[] | undefined = workspace.getConfiguration('vscode-bracket-select').get('sameLineString')
@@ -84,8 +89,12 @@ export function activate(context: ExtensionContext): void {
                 }
             }
 
-            // d(123)
+
+            const startTime = process.hrtime()
             const everything = walker(documentText)
+            const diff = process.hrtime(startTime)
+            d(HrTime_diffToMs(diff))
+
             // d(everything)
 
             labelEachCursor:

@@ -1,4 +1,4 @@
-import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement} from 'typescript'
+import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration} from 'typescript'
 
 // function getStack(): NodeJS.CallSite[] | string | undefined {
 // var orig = Error.prepareStackTrace
@@ -47,12 +47,18 @@ export default (toParse: string): [SyntaxKind,number,number][] => {
 
         const everything: [SyntaxKind,number,number][] = []
 
-        const tempArr = []
+        const tempArr: myNode[] = []
         // let node: any = parse(toParse,{range:true})
-        const startTime = process.hrtime()
-        let node: SourceFile| HasJSDoc | Statement = createSourceFile('',toParse,ScriptTarget.Latest,true)
-        const diff = process.hrtime(startTime)
-        d(HrTime_diffToMs(diff))
+        // const startTime = process.hrtime()
+
+        // type myNode = SourceFile| HasJSDoc | NamedImportBindings | Expression
+        type myNode = SourceFile| HasJSDoc | Expression | NamedImportBindings
+        //NamedImportBindings for tempArr.push(node.importClause.namedBindings)
+        // Expression for tempArr.push(node.moduleSpecifier)
+
+        let node: myNode = createSourceFile('',toParse,ScriptTarget.Latest,true)
+        // const diff = process.hrtime(startTime)
+        // d(HrTime_diffToMs(diff)) //150ms
 
         let subNode,subNode2
 
@@ -71,9 +77,9 @@ export default (toParse: string): [SyntaxKind,number,number][] => {
         d(statements)
 
         for (let i = statements.length - 1; i > -1; i--) {
-            tempArr.push(statements[i])
+            tempArr.push(statements[i] as myNode)
         }
-        node = tempArr.pop() as Statement
+        node = tempArr.pop() as myNode
 
         outer:
         while (true) {
@@ -83,12 +89,17 @@ export default (toParse: string): [SyntaxKind,number,number][] => {
                 tempArr.push(node.body)
                 break
             case SyntaxKind.ImportDeclaration:
+                // node | ImportDeclaration BECAUSE node can have ANY SyntaxKind, why is node even here..
+                // node ISN'T HERE, it's Expression..
                 tempArr.push(node.moduleSpecifier)
-                tempArr.push(node.importClause)
+                if (node.importClause) {
+                    if (node.importClause.namedBindings) {
+                        tempArr.push(node.importClause.namedBindings)
+                    }
+                }
                 break
-            case SyntaxKind.ImportClause:
-                d(node)
-                everything.push([SyntaxKind.ImportClause,node.pos + 1,node.end])
+            case SyntaxKind.NamedImports:
+                everything.push([SyntaxKind.NamedImports,node.pos + 1,node.end])
                 break
             case 'ExportNamedDeclaration':
                 if (node.declaration) {
@@ -513,9 +524,6 @@ export default (toParse: string): [SyntaxKind,number,number][] => {
 
             if (tempArr.length) {
                 node = tempArr.pop()
-                if (node === undefined) {
-                    let no
-                }
                 continue outer
             }
             break outer
@@ -525,6 +533,7 @@ export default (toParse: string): [SyntaxKind,number,number][] => {
     } catch (error) {
         d('walker error')
         d(error)
+        return []
 
     }
 }

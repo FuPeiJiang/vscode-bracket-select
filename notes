@@ -88,3 +88,9 @@ add 'for test'
 fix if
 
 parser, if inside string, use mine
+
+vscode-bracket-select\node_modules\typescript\lib\typescript.d.ts
+    export interface Expression extends Node {
+        _expressionBrand: any;
+        kind: SyntaxKind.StringLiteral
+    }
