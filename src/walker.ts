@@ -31,7 +31,16 @@ function d(...text: (any)[]) {
     // const lineNumber = frame.split(':').reverse()[1]
     const functionName = frame.split(' ')[5]
     // console.log(`${functionName}:${lineNumber}`,...text)
-    console.log(`${functionName}`,...text)
+    console.log(`${functionName}`,'➤',...text)
+}
+
+// writeSync(arrOrObjToString(everything),'everything_before.txt')
+// const converted = modifyEverythingToV2(everything,false)
+
+function HrTime_diffToMs(diff: [number,number]) {
+    // d(diff)
+    // return diff[0] * 1000000 + diff[1] / 1000000
+    return `${diff[0] * 1000 + diff[1] / 1000000}ms`
 }
 
 export default (toParse: string): [string,number,number][] => {
@@ -40,7 +49,12 @@ export default (toParse: string): [string,number,number][] => {
     const tempArr = []
     let tempIdx = -1
     // let node: any = parse(toParse,{range:true})
-    let node = ts.createSourceFile('',toParse,ts.ScriptTarget.Latest,true)
+
+    const startTime = process.hrtime()
+    let node: any = ts.createSourceFile('',toParse,ts.ScriptTarget.Latest,true)
+    const diff = process.hrtime(startTime)
+    d(HrTime_diffToMs(diff))
+
     d(node.statements)
     let subNode,subNode2
 
