@@ -86,3 +86,5 @@ WHAT
 
 add 'for test'
 fix if
+
+parser, if inside string, use mine

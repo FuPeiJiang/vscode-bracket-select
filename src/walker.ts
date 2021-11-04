@@ -131,7 +131,6 @@ export default (toParse: string): [string,number,number][] => {
         tempArr.push(subNode[i])
       }
       break
-      elements
     case 'ExpressionStatement': //check if expressionStatement itself it wrapped in parentheses
       // d(node)
       subNode = node.expression
