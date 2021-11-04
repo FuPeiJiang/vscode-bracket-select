@@ -88,6 +88,9 @@ export default (toParse: string): [SyntaxKind,number,number][] => {
             case 'LabeledStatement':
                 tempArr.push(node.body)
                 break
+            case SyntaxKind.StringLiteral:
+                everything.push([SyntaxKind.StringLiteral,node.pos + 1,node.end])
+                break
             case SyntaxKind.ImportDeclaration:
                 // node | ImportDeclaration BECAUSE node can have ANY SyntaxKind, why is node even here..
                 // node ISN'T HERE, it's Expression..
