@@ -1,5 +1,8 @@
 {
 	"compilerOptions": {
+		"rootDir": "./",  // for tsconfig.tsbuildinfo to be inside ./out
+		"skipLibCheck": true, //tsc ignore node_modules: node_modules/vscode/vscode.d.ts:543:3 - error TS2687: All declarations of 'kind' must have identical modifiers.
+		"incremental": true, // Enable incremental compilation
 		"module": "commonjs",
 		"target": "es6",
 		"outDir": "out",
@@ -7,16 +10,15 @@
 			"es6"
 		],
 		"sourceMap": true,
-		"rootDir": "src",
-		"strict": true   /* enable all strict type-checking options */
+		"strict": true /* enable all strict type-checking options */
 		/* Additional Checks */
 		// "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
 		// "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
 		// "noUnusedParameters": true,  /* Report errors on unused parameters. */
 	},
-	"exclude": [
-		"node_modules",
-		".vscode-test"
-	],
-  "include": ["src/extension.ts"],
+	// "exclude": [
+	// "node_modules",
+	// ".vscode-test"
+	// ],
+	"include": ["src/**/*.ts"],
 }

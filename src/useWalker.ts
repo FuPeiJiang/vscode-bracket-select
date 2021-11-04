@@ -38,6 +38,6 @@ const everything = walker(toParse)
 
 console.log(everything)
 
-function read(path) {
+function read(path: string) {
   return fs.readFileSync(path).toString()
 }
