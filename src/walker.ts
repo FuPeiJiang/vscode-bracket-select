@@ -152,6 +152,7 @@ export default (toParse: string): everything_element[] => {
                 }
                 break
             case SyntaxKind.CallExpression:{
+                tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.CallExpression,node.arguments.pos - 1,node.end]})
                 reversePushTo_TempArr(node.arguments)
                 tempArr.push(node.expression)
                 break
@@ -159,6 +160,7 @@ export default (toParse: string): everything_element[] => {
             case SyntaxKind.ElementAccessExpression:
                 tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.ElementAccessExpression,node.argumentExpression.pos - 1,node.end]})
                 tempArr.push(node.argumentExpression)
+                // d(node.argumentExpression.kind)
                 tempArr.push(node.expression)
                 break
             case SyntaxKind.ArrayLiteralExpression:{
@@ -166,6 +168,9 @@ export default (toParse: string): everything_element[] => {
                 reversePushTo_TempArr(node.elements)
                 break
             }
+            case SyntaxKind.BinaryExpression:
+                d(node)
+                break
             case SyntaxKind.StringLiteral:
                 everything.push([SyntaxKind.StringLiteral,node.pos + 1,node.end])
                 break
@@ -184,6 +189,7 @@ export default (toParse: string): everything_element[] => {
                 everything.push([SyntaxKind.NamedImports,node.pos + 1,node.end])
                 break
             case SyntaxKind.Identifier:
+                // d('SyntaxKind.Identifier REEEEEEEEEEEEEEEEEEEEEEEEEEE',node)
             case SyntaxKind.NumericLiteral:
                 break
             default:
