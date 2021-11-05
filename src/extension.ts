@@ -95,7 +95,7 @@ export function activate(context: ExtensionContext): void {
             const diff = process.hrtime(startTime)
             d(HrTime_diffToMs(diff))
 
-            // d(everything)
+            d(everything)
 
             labelEachCursor:
             for (let n = 0,len = selectionArr.length; n < len; n++) {

@@ -1,4 +1,4 @@
-import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration} from 'typescript'
+import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,NodeArray,LeftHandSideExpression} from 'typescript'
 
 // function getStack(): NodeJS.CallSite[] | string | undefined {
 // var orig = Error.prepareStackTrace
@@ -42,17 +42,34 @@ function HrTime_diffToMs(diff: [number,number]) {
     return `${diff[0] * 1000 + diff[1] / 1000000}ms`
 }
 
-export default (toParse: string): [SyntaxKind,number,number][] => {
+
+type everything_element = [SyntaxKind,number,number]
+
+
+
+export default (toParse: string): everything_element[] => {
     try {
 
-        const everything: [SyntaxKind,number,number][] = []
+        const everything: everything_element[] = []
 
         const tempArr: myNode[] = []
+        function reversePushTo_TempArr<T>(nodeArr: T) {
+            for (let i = nodeArr.length - 1; i > -1; i--) {
+                tempArr.push(nodeArr[i])
+            }
+        }
         // let node: any = parse(toParse,{range:true})
         // const startTime = process.hrtime()
 
+        enum my_syntax_kind {
+            JustPushIt = -1,
+        }
         // type myNode = SourceFile| HasJSDoc | NamedImportBindings | Expression
-        type myNode = SourceFile| HasJSDoc | Expression | NamedImportBindings
+        interface JustPushIt {
+            readonly kind: my_syntax_kind.JustPushIt,element_everything: everything_element
+        }
+        type myNode = JustPushIt | SourceFile | HasJSDoc | Expression | NamedImportBindings | ElementAccessExpression | ArrayLiteralExpression | LeftHandSideExpression
+
         //NamedImportBindings for tempArr.push(node.importClause.namedBindings)
         // Expression for tempArr.push(node.moduleSpecifier)
 
@@ -85,11 +102,38 @@ export default (toParse: string): [SyntaxKind,number,number][] => {
         while (true) {
             // d(node)
             switch (node.kind) {
-            case 'LabeledStatement':
-                tempArr.push(node.body)
+            case my_syntax_kind.JustPushIt:
+                everything.push(node.element_everything)
                 break
+            case SyntaxKind.VariableStatement:{
+                reversePushTo_TempArr(node.declarationList.declarations)
+                break
+            }
+            case SyntaxKind.VariableDeclaration:
+                if (node.initializer) {
+                    tempArr.push(node.initializer)
+                }
+                break
+            case SyntaxKind.CallExpression:{
+                reversePushTo_TempArr(node.arguments)
+                tempArr.push(node.expression)
+                break
+            }
+            case SyntaxKind.ElementAccessExpression:
+                tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.ElementAccessExpression,node.argumentExpression.pos + 1,node.end]})
+                tempArr.push(node.argumentExpression)
+                tempArr.push(node.expression)
+                break
+            case SyntaxKind.ArrayLiteralExpression:{
+                everything.push([SyntaxKind.ArrayLiteralExpression,node.pos + 1,node.end])
+                reversePushTo_TempArr(node.elements)
+                break
+            }
             case SyntaxKind.StringLiteral:
                 everything.push([SyntaxKind.StringLiteral,node.pos + 1,node.end])
+                break
+            case SyntaxKind.NumericLiteral:
+                everything.push([SyntaxKind.NumericLiteral,node.pos + 1,node.end])
                 break
             case SyntaxKind.ImportDeclaration:
                 // node | ImportDeclaration BECAUSE node can have ANY SyntaxKind, why is node even here..
@@ -523,10 +567,15 @@ export default (toParse: string): [SyntaxKind,number,number][] => {
             case 'TSTypeAnnotation':
                 tempArr.push(node.typeAnnotation)
                 break
+            case SyntaxKind.Identifier:
+                break
+            default:
+                d(node)
+                let no
             }
 
             if (tempArr.length) {
-                node = tempArr.pop()
+                node = tempArr.pop() as myNode
                 continue outer
             }
             break outer

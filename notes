@@ -92,5 +92,10 @@ parser, if inside string, use mine
 vscode-bracket-select\node_modules\typescript\lib\typescript.d.ts
     export interface Expression extends Node {
         _expressionBrand: any;
-        kind: SyntaxKind.StringLiteral
+        kind: SyntaxKind.StringLiteral | SyntaxKind.CallExpression
+    }
+
+    // export type Expression = StringLiteral|CallExpression & {
+    export type Expression = LiteralToken|CallExpression & {
+        _expressionBrand: any;
     }
