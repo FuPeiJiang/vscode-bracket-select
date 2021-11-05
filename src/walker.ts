@@ -159,8 +159,8 @@ export default (toParse: string): everything_element[] => {
                 break
             }
             case SyntaxKind.ElementAccessExpression:
-                tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.ElementAccessExpression,node.argumentExpression.pos - 1,node.end]})
                 tempArr.push(node.argumentExpression)
+                tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.ElementAccessExpression,node.argumentExpression.pos - 1,node.end]})
                 // d(node.argumentExpression.kind)
                 tempArr.push(node.expression)
                 break

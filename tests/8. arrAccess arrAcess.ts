@@ -1,0 +1,1 @@
+whiteSpaceObj[lines[i][c]]
