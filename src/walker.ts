@@ -115,7 +115,7 @@ export default (toParse: string): everything_element[] => {
             readonly kind: my_syntax_kind.JustPushIt,element_everything: everything_element
         }
         // type ExpressionInterface = LiteralToken | CallExpression | ElementAccessExpression | ArrayLiteralExpression
-        type myNode = JustPushIt | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | ElementAccessExpression | PropertyName | NewExpression
+        type myNode = JustPushIt | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression
 
 
         //NamedImportBindings for tempArr.push(node.importClause.namedBindings)
@@ -153,14 +153,20 @@ export default (toParse: string): everything_element[] => {
                 }
                 break
             case SyntaxKind.CallExpression:{
-                tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.CallExpression,node.arguments.pos - 1,node.end]})
                 reversePushTo_TempArr(node.arguments)
+                tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.CallExpression,node.arguments.pos - 1,node.end]})
                 tempArr.push(node.expression)
                 break
             }
             case SyntaxKind.ElementAccessExpression:
                 tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.ElementAccessExpression,node.argumentExpression.pos - 1,node.end]})
                 tempArr.push(node.argumentExpression)
+                // d(node.argumentExpression.kind)
+                tempArr.push(node.expression)
+                break
+            case SyntaxKind.PropertyAccessExpression:
+                // we ignore node.name
+                // tempArr.push(node.name)
                 // d(node.argumentExpression.kind)
                 tempArr.push(node.expression)
                 break
@@ -238,7 +244,8 @@ export default (toParse: string): everything_element[] => {
             case SyntaxKind.NumericLiteral:
                 break
             default:
-                d(node)
+                d(node.kind)
+                // d(node)
                 let no
             }
 
