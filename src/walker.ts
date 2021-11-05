@@ -1,3 +1,4 @@
+import {reverse} from 'dns'
 import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from 'typescript'
 // import {createSourceFile} from 'typescript'
 // import {Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from './lol'
@@ -171,10 +172,23 @@ export default (toParse: string): everything_element[] => {
             case SyntaxKind.BinaryExpression:
                 d(node)
                 break
+            case SyntaxKind.ExportAssignment:
+                tempArr.push(node.expression)
+                break
+            case SyntaxKind.ArrowFunction:{
+                tempArr.push(node.body)
+                reversePushTo_TempArr(node.parameters)
+                const indexOfRightParen = toParse.indexOf(')',node.parameters.end + 1)
+                everything.push([SyntaxKind.ArrowFunction,node.parameters.pos - 1,indexOfRightParen + 1])
+                break
+            }
+            case SyntaxKind.Block:
+                everything.push([SyntaxKind.Block,node.statements.pos - 1,node.end])
+                reversePushTo_TempArr(node.statements)
+                break
             case SyntaxKind.StringLiteral:
                 everything.push([SyntaxKind.StringLiteral,node.pos + 1,node.end])
                 break
-
             case SyntaxKind.ImportDeclaration:
                 // node | ImportDeclaration BECAUSE node can have ANY SyntaxKind, why is node even here..
                 // node ISN'T HERE, it's Expression..
