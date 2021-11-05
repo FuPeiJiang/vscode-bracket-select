@@ -201,7 +201,8 @@ export default (toParse: string): everything_element[] => {
                 tempArr.push(node.expression)
                 break
             case SyntaxKind.StringLiteral:
-                everything.push([SyntaxKind.StringLiteral,node.pos + 1,node.end])
+                // https://ts-ast-viewer.com/#code/IYAgvCldO1DkAmeQ
+                everything.push([SyntaxKind.StringLiteral,node.getStart(),node.end])
                 break
             case SyntaxKind.ImportDeclaration:
                 // node | ImportDeclaration BECAUSE node can have ANY SyntaxKind, why is node even here..
@@ -215,6 +216,10 @@ export default (toParse: string): everything_element[] => {
                 break
             case SyntaxKind.NamedImports:
                 everything.push([SyntaxKind.NamedImports,node.pos + 1,node.end])
+                break
+            case SyntaxKind.ParenthesizedExpression:
+                everything.push([SyntaxKind.ParenthesizedExpression,node.getStart(),node.end])
+                tempArr.push(node.expression)
                 break
             case SyntaxKind.Identifier:
                 // d('SyntaxKind.Identifier REEEEEEEEEEEEEEEEEEEEEEEEEEE',node)
