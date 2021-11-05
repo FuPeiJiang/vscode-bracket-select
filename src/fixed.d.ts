@@ -1512,7 +1512,7 @@ declare namespace ts {
     export interface LabeledStatement extends Statement {
         readonly kind: SyntaxKind.LabeledStatement;
         readonly label: Identifier;
-        readonly statement: Statement;
+        readonly statement: WhileStatement | ForStatement;
     }
     export interface ThrowStatement extends Statement {
         readonly kind: SyntaxKind.ThrowStatement;

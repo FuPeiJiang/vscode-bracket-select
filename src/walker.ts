@@ -240,6 +240,9 @@ export default (toParse: string): everything_element[] => {
                     tempArr.push(node.expression)
                 }
                 break
+            case SyntaxKind.LabeledStatement:
+                tempArr.push(node.statement)
+                break
             case SyntaxKind.StringLiteral:
                 // https://ts-ast-viewer.com/#code/IYAgvCldO1DkAmeQ
                 everything.push([SyntaxKind.StringLiteral,node.getStart(),node.end])
