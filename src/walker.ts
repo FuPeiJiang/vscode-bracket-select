@@ -170,7 +170,8 @@ export default (toParse: string): everything_element[] => {
                 break
             }
             case SyntaxKind.BinaryExpression:
-                d(node)
+                tempArr.push(node.right)
+                tempArr.push(node.left)
                 break
             case SyntaxKind.ExportAssignment:
                 tempArr.push(node.expression)
@@ -178,13 +179,26 @@ export default (toParse: string): everything_element[] => {
             case SyntaxKind.ArrowFunction:{
                 tempArr.push(node.body)
                 reversePushTo_TempArr(node.parameters)
-                const indexOfRightParen = toParse.indexOf(')',node.parameters.end + 1)
+                const indexOfRightParen = toParse.indexOf(')',node.parameters.end)
                 everything.push([SyntaxKind.ArrowFunction,node.parameters.pos - 1,indexOfRightParen + 1])
                 break
             }
             case SyntaxKind.Block:
                 everything.push([SyntaxKind.Block,node.statements.pos - 1,node.end])
                 reversePushTo_TempArr(node.statements)
+                break
+            case SyntaxKind.IfStatement:{
+                if (node.elseStatement) {
+                    tempArr.push(node.elseStatement)
+                }
+                tempArr.push(node.thenStatement)
+                tempArr.push(node.expression)
+                const indexOfRightParen = toParse.indexOf(')',node.expression.end)
+                everything.push([SyntaxKind.IfStatement,node.expression.pos - 1,indexOfRightParen + 1])
+                break
+            }
+            case SyntaxKind.ExpressionStatement:
+                tempArr.push(node.expression)
                 break
             case SyntaxKind.StringLiteral:
                 everything.push([SyntaxKind.StringLiteral,node.pos + 1,node.end])

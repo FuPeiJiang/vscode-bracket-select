@@ -1435,8 +1435,8 @@ declare namespace ts {
     export interface IfStatement extends Statement {
         readonly kind: SyntaxKind.IfStatement;
         readonly expression: Expression;
-        readonly thenStatement: Statement;
-        readonly elseStatement?: Statement;
+        readonly thenStatement: Block;
+        readonly elseStatement?: IfStatement;
     }
     export interface IterationStatement extends Statement {
         readonly statement: Statement;
