@@ -1,5 +1,5 @@
 import {reverse} from 'dns'
-import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from 'typescript'
+import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,CallExpression,LiteralToken,LeftHandSideExpression,PropertyName} from 'typescript'
 // import {createSourceFile} from 'typescript'
 // import {Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from './lol'
 
@@ -115,7 +115,7 @@ export default (toParse: string): everything_element[] => {
             readonly kind: my_syntax_kind.JustPushIt,element_everything: everything_element
         }
         // type ExpressionInterface = LiteralToken | CallExpression | ElementAccessExpression | ArrayLiteralExpression
-        type myNode = JustPushIt | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | ElementAccessExpression | ArrayLiteralExpression
+        type myNode = JustPushIt | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | ElementAccessExpression | PropertyName
 
 
         //NamedImportBindings for tempArr.push(node.importClause.namedBindings)
@@ -164,11 +164,18 @@ export default (toParse: string): everything_element[] => {
                 // d(node.argumentExpression.kind)
                 tempArr.push(node.expression)
                 break
-            case SyntaxKind.ArrayLiteralExpression:{
+            case SyntaxKind.ArrayLiteralExpression:
                 everything.push([SyntaxKind.ArrayLiteralExpression,node.elements.pos - 1,node.end])
                 reversePushTo_TempArr(node.elements)
                 break
-            }
+            case SyntaxKind.ObjectLiteralExpression:
+                everything.push([SyntaxKind.ArrayLiteralExpression,node.properties.pos - 1,node.end])
+                reversePushTo_TempArr(node.properties)
+                break
+            case SyntaxKind.PropertyAssignment:
+                tempArr.push(node.initializer)
+                tempArr.push(node.name)
+                break
             case SyntaxKind.BinaryExpression:
                 tempArr.push(node.right)
                 tempArr.push(node.left)
