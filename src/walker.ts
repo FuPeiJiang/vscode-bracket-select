@@ -125,7 +125,7 @@ export default (toParse: string): everything_element[] => {
                 tempArr.push(node.expression)
                 break
             case SyntaxKind.ArrayLiteralExpression:{
-                everything.push([SyntaxKind.ArrayLiteralExpression,node.pos + 1,node.end])
+                everything.push([SyntaxKind.ArrayLiteralExpression,node.elements.pos - 1,node.end])
                 reversePushTo_TempArr(node.elements)
                 break
             }
