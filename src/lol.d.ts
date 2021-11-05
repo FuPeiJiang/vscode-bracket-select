@@ -994,7 +994,7 @@ declare namespace ts {
     export interface OmittedExpression extends not_Expr {
         readonly kind: SyntaxKind.OmittedExpression;
     }
-    export interface PartiallyEmittedExpression extends LeftHandSideExpression {
+    export type PartiallyEmittedExpression = LeftHandSideExpression & {
         readonly kind: SyntaxKind.PartiallyEmittedExpression;
         readonly expression: Expression;
     }
@@ -1003,65 +1003,64 @@ declare namespace ts {
         _unaryExpressionBrand: any;
     }
 
-
     /** Deprecated, please use UpdateExpression */
     export type IncrementExpression = UpdateExpression
-    export interface UpdateExpression extends UnaryExpression {
+    export type UpdateExpression = UnaryExpression & {
         _updateExpressionBrand: any;
     }
     export type PrefixUnaryOperator = SyntaxKind.PlusPlusToken | SyntaxKind.MinusMinusToken | SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.TildeToken | SyntaxKind.ExclamationToken
-    export interface PrefixUnaryExpression extends UpdateExpression {
+    export type PrefixUnaryExpression = UpdateExpression & {
         readonly kind: SyntaxKind.PrefixUnaryExpression;
         readonly operator: PrefixUnaryOperator;
         readonly operand: UnaryExpression;
     }
     export type PostfixUnaryOperator = SyntaxKind.PlusPlusToken | SyntaxKind.MinusMinusToken
-    export interface PostfixUnaryExpression extends UpdateExpression {
+    export type PostfixUnaryExpression = UpdateExpression & {
         readonly kind: SyntaxKind.PostfixUnaryExpression;
         readonly operand: LeftHandSideExpression;
         readonly operator: PostfixUnaryOperator;
     }
-    export interface LeftHandSideExpression extends UpdateExpression {
+    export type LeftHandSideExpression = UpdateExpression & {
         _leftHandSideExpressionBrand: any;
     }
-    export interface MemberExpression extends LeftHandSideExpression {
+    export type MemberExpression = LeftHandSideExpression & {
         _memberExpressionBrand: any;
     }
-    export interface PrimaryExpression extends MemberExpression {
+    export type PrimaryExpression = MemberExpression & {
         _primaryExpressionBrand: any;
     }
-    export interface NullLiteral extends PrimaryExpression {
+    export type NullLiteral = PrimaryExpression & {
         readonly kind: SyntaxKind.NullKeyword;
     }
-    export interface TrueLiteral extends PrimaryExpression {
+    export type TrueLiteral = PrimaryExpression & {
         readonly kind: SyntaxKind.TrueKeyword;
     }
-    export interface FalseLiteral extends PrimaryExpression {
+    export type FalseLiteral = PrimaryExpression & {
         readonly kind: SyntaxKind.FalseKeyword;
     }
     export type BooleanLiteral = TrueLiteral | FalseLiteral
-    export interface ThisExpression extends PrimaryExpression {
+    export type ThisExpression = PrimaryExpression & {
         readonly kind: SyntaxKind.ThisKeyword;
     }
-    export interface SuperExpression extends PrimaryExpression {
+    export type SuperExpression = PrimaryExpression & {
         readonly kind: SyntaxKind.SuperKeyword;
     }
-    export interface ImportExpression extends PrimaryExpression {
+    export type ImportExpression = PrimaryExpression & {
         readonly kind: SyntaxKind.ImportKeyword;
     }
-    export interface DeleteExpression extends UnaryExpression {
+    export type DeleteExpression = UnaryExpression & {
         readonly kind: SyntaxKind.DeleteExpression;
         readonly expression: UnaryExpression;
     }
-    export interface TypeOfExpression extends UnaryExpression {
+    export type TypeOfExpression = UnaryExpression & {
         readonly kind: SyntaxKind.TypeOfExpression;
         readonly expression: UnaryExpression;
     }
-    export interface VoidExpression extends UnaryExpression {
+    export type VoidExpression = UnaryExpression & {
         readonly kind: SyntaxKind.VoidExpression;
         readonly expression: UnaryExpression;
     }
-    export interface AwaitExpression extends UnaryExpression {
+    export type AwaitExpression = UnaryExpression & {
         readonly kind: SyntaxKind.AwaitExpression;
         readonly expression: UnaryExpression;
     }
@@ -1191,7 +1190,7 @@ declare namespace ts {
     }
     export type PseudoLiteralToken = TemplateHead | TemplateMiddle | TemplateTail
     export type TemplateLiteralToken = NoSubstitutionTemplateLiteral | PseudoLiteralToken
-    export interface TemplateExpression extends PrimaryExpression {
+    export type TemplateExpression = PrimaryExpression & {
         readonly kind: SyntaxKind.TemplateExpression;
         readonly head: TemplateHead;
         readonly templateSpans: NodeArray<TemplateSpan>;
@@ -1207,7 +1206,7 @@ declare namespace ts {
         readonly kind: SyntaxKind.ParenthesizedExpression;
         readonly expression: Expression;
     }
-    export interface ArrayLiteralExpression extends PrimaryExpression {
+    export type ArrayLiteralExpression = PrimaryExpression & {
         readonly kind: SyntaxKind.ArrayLiteralExpression;
         readonly elements: NodeArray<Expression>;
     }
@@ -1250,16 +1249,16 @@ declare namespace ts {
         readonly expression: EntityNameExpression;
         readonly name: Identifier;
     }
-    export interface ElementAccessExpression extends MemberExpression {
+    export type ElementAccessExpression = MemberExpression & {
         readonly kind: SyntaxKind.ElementAccessExpression;
         readonly expression: LeftHandSideExpression;
         readonly questionDotToken?: QuestionDotToken;
         readonly argumentExpression: Expression;
     }
-    export interface ElementAccessChain extends ElementAccessExpression {
+    export type ElementAccessChain = ElementAccessExpression & {
         _optionalChainBrand: any;
     }
-    export interface SuperElementAccessExpression extends ElementAccessExpression {
+    export type SuperElementAccessExpression = ElementAccessExpression & {
         readonly expression: SuperExpression;
     }
     export type SuperProperty = SuperPropertyAccessExpression | SuperElementAccessExpression
@@ -1291,7 +1290,7 @@ declare namespace ts {
         readonly typeArguments?: NodeArray<TypeNode>;
         readonly arguments?: NodeArray<Expression>;
     }
-    export interface TaggedTemplateExpression extends MemberExpression {
+    export type TaggedTemplateExpression = MemberExpression & {
         readonly kind: SyntaxKind.TaggedTemplateExpression;
         readonly tag: LeftHandSideExpression;
         readonly typeArguments?: NodeArray<TypeNode>;
@@ -1303,25 +1302,25 @@ declare namespace ts {
         readonly expression: Expression;
         readonly type: TypeNode;
     }
-    export interface TypeAssertion extends UnaryExpression {
+    export type TypeAssertion = UnaryExpression & {
         readonly kind: SyntaxKind.TypeAssertionExpression;
         readonly type: TypeNode;
         readonly expression: UnaryExpression;
     }
     export type AssertionExpression = TypeAssertion | AsExpression
-    export interface NonNullExpression extends LeftHandSideExpression {
+    export type NonNullExpression = LeftHandSideExpression & {
         readonly kind: SyntaxKind.NonNullExpression;
         readonly expression: Expression;
     }
-    export interface NonNullChain extends NonNullExpression {
+    export type NonNullChain = NonNullExpression & {
         _optionalChainBrand: any;
     }
-    export interface MetaProperty extends PrimaryExpression {
+    export type MetaProperty = PrimaryExpression & {
         readonly kind: SyntaxKind.MetaProperty;
         readonly keywordToken: SyntaxKind.NewKeyword | SyntaxKind.ImportKeyword;
         readonly name: Identifier;
     }
-    export interface JsxElement extends PrimaryExpression {
+    export type JsxElement = PrimaryExpression & {
         readonly kind: SyntaxKind.JsxElement;
         readonly openingElement: JsxOpeningElement;
         readonly children: NodeArray<JsxChild>;
@@ -1344,13 +1343,13 @@ declare namespace ts {
         readonly typeArguments?: NodeArray<TypeNode>;
         readonly attributes: JsxAttributes;
     }
-    export interface JsxSelfClosingElement extends PrimaryExpression {
+    export type JsxSelfClosingElement = PrimaryExpression & {
         readonly kind: SyntaxKind.JsxSelfClosingElement;
         readonly tagName: JsxTagNameExpression;
         readonly typeArguments?: NodeArray<TypeNode>;
         readonly attributes: JsxAttributes;
     }
-    export interface JsxFragment extends PrimaryExpression {
+    export type JsxFragment = PrimaryExpression & {
         readonly kind: SyntaxKind.JsxFragment;
         readonly openingFragment: JsxOpeningFragment;
         readonly children: NodeArray<JsxChild>;
@@ -2054,7 +2053,7 @@ declare namespace ts {
     export interface TsConfigSourceFile extends JsonSourceFile {
         extendedSourceFiles?: string[];
     }
-    export interface JsonMinusNumericLiteral extends PrefixUnaryExpression {
+    export type JsonMinusNumericLiteral = PrefixUnaryExpression & {
         readonly kind: SyntaxKind.PrefixUnaryExpression;
         readonly operator: SyntaxKind.MinusToken;
         readonly operand: NumericLiteral;

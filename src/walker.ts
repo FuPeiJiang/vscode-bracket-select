@@ -1,5 +1,6 @@
-// import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from 'typescript'
-import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from './lol'
+import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from 'typescript'
+// import {createSourceFile} from 'typescript'
+// import {Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from './lol'
 
 // function getStack(): NodeJS.CallSite[] | string | undefined {
 // var orig = Error.prepareStackTrace
@@ -55,11 +56,11 @@ type veryExtended = extendedAmal & {
 // _unaryExpressionBrand: any;
 // }
 
-function why(omg: extendedAmal) {
+function why1(omg: extendedAmal) {
     omg.kind
 }
 
-function why(omg: veryExtended) {
+function why2(omg: veryExtended) {
     omg.kind
 }
 
@@ -89,7 +90,6 @@ function HrTime_diffToMs(diff: [number,number]) {
 
 
 type everything_element = [SyntaxKind,number,number]
-
 
 
 export default (toParse: string): everything_element[] => {
@@ -123,16 +123,6 @@ export default (toParse: string): everything_element[] => {
         let node: myNode = createSourceFile('',toParse,ScriptTarget.Latest,true)
         // const diff = process.hrtime(startTime)
         // d(HrTime_diffToMs(diff)) //150ms
-
-        let subNode,subNode2
-
-        let c1,e1,e2,c2
-
-        let operatorIndex
-        // if (c1 !== e1 && e2 !== c2) {
-
-        // body: nodes[]
-        // d(node)
 
         const statements = node.statements
         if (statements.length === 0) {
