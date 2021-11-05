@@ -1,5 +1,5 @@
 import {reverse} from 'dns'
-import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,CallExpression,LiteralToken,LeftHandSideExpression,PropertyName} from 'typescript'
+import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,CallExpression,LiteralToken,LeftHandSideExpression,PropertyName,NewExpression} from 'typescript'
 // import {createSourceFile} from 'typescript'
 // import {Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from './lol'
 
@@ -115,7 +115,7 @@ export default (toParse: string): everything_element[] => {
             readonly kind: my_syntax_kind.JustPushIt,element_everything: everything_element
         }
         // type ExpressionInterface = LiteralToken | CallExpression | ElementAccessExpression | ArrayLiteralExpression
-        type myNode = JustPushIt | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | ElementAccessExpression | PropertyName
+        type myNode = JustPushIt | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | ElementAccessExpression | PropertyName | NewExpression
 
 
         //NamedImportBindings for tempArr.push(node.importClause.namedBindings)
@@ -205,6 +205,11 @@ export default (toParse: string): everything_element[] => {
                 break
             }
             case SyntaxKind.ExpressionStatement:
+                tempArr.push(node.expression)
+                break
+            case SyntaxKind.NewExpression:
+                everything.push([SyntaxKind.NewExpression,node.arguments.pos - 1,node.end])
+                reversePushTo_TempArr(node.arguments)
                 tempArr.push(node.expression)
                 break
             case SyntaxKind.StringLiteral:

@@ -1293,7 +1293,7 @@ declare namespace ts {
         readonly kind: SyntaxKind.NewExpression;
         readonly expression: LeftHandSideExpression;
         readonly typeArguments?: NodeArray<TypeNode>;
-        readonly arguments?: NodeArray<Expression>;
+        readonly arguments: NodeArray<Expression>;
     }
     export interface TaggedTemplateExpression extends MemberExpression {
         readonly kind: SyntaxKind.TaggedTemplateExpression;
