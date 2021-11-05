@@ -99,3 +99,22 @@ vscode-bracket-select\node_modules\typescript\lib\typescript.d.ts
     export type Expression = LiteralToken|CallExpression & {
         _expressionBrand: any;
     }
+
+LeftHandSideExpression needs to be extended from Expression, but how ?
+
+`export interface (\w*?) extends UnaryExpression \{`
+`export type $1 = UnaryExpression & {`
+
+UpdateExpression
+  .PrefixUnaryExpression
+    ..JsonMinusNumericLiteral
+  .PostfixUnaryExpression
+  .LeftHandSideExpression
+    ..PartiallyEmittedExpression
+    ..MemberExpression
+    ..NonNullExpression
+DeleteExpression
+TypeOfExpression
+VoidExpression
+AwaitExpression
+TypeAssertion
