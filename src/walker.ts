@@ -120,7 +120,7 @@ export default (toParse: string): everything_element[] => {
                 break
             }
             case SyntaxKind.ElementAccessExpression:
-                tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.ElementAccessExpression,node.argumentExpression.pos + 1,node.end]})
+                tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.ElementAccessExpression,node.argumentExpression.pos - 1,node.end]})
                 tempArr.push(node.argumentExpression)
                 tempArr.push(node.expression)
                 break
@@ -132,9 +132,7 @@ export default (toParse: string): everything_element[] => {
             case SyntaxKind.StringLiteral:
                 everything.push([SyntaxKind.StringLiteral,node.pos + 1,node.end])
                 break
-            case SyntaxKind.NumericLiteral:
-                everything.push([SyntaxKind.NumericLiteral,node.pos + 1,node.end])
-                break
+
             case SyntaxKind.ImportDeclaration:
                 // node | ImportDeclaration BECAUSE node can have ANY SyntaxKind, why is node even here..
                 // node ISN'T HERE, it's Expression..
@@ -568,6 +566,7 @@ export default (toParse: string): everything_element[] => {
                 tempArr.push(node.typeAnnotation)
                 break
             case SyntaxKind.Identifier:
+            case SyntaxKind.NumericLiteral:
                 break
             default:
                 d(node)
