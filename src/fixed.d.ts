@@ -91,7 +91,7 @@ declare namespace ts {
     }
 }
 declare namespace ts {
-    export type Expression = LiteralToken | Identifier | CallExpression | ElementAccessExpression | ArrayLiteralExpression | ObjectLiteralExpression | AccessExpression
+    export type Expression = LiteralToken | Identifier | CallExpression | ElementAccessExpression | ArrayLiteralExpression | ObjectLiteralExpression | AccessExpression | PostfixUnaryExpression
     export type LeftHandSideExpression = BinaryExpression | NumericLiteral
 
     export type Path = string & {
@@ -1439,7 +1439,7 @@ declare namespace ts {
         readonly elseStatement?: IfStatement;
     }
     export interface IterationStatement extends Statement {
-        readonly statement: Statement;
+        readonly statement: Block;
     }
     export interface DoStatement extends IterationStatement {
         readonly kind: SyntaxKind.DoStatement;

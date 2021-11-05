@@ -186,6 +186,9 @@ export default (toParse: string): everything_element[] => {
                 tempArr.push(node.right)
                 tempArr.push(node.left)
                 break
+            case SyntaxKind.PostfixUnaryExpression:
+                tempArr.push(node.operand) //c++, but it's possible that arr[1]++
+                break
             case SyntaxKind.ExportAssignment:
                 tempArr.push(node.expression)
                 break
@@ -217,6 +220,13 @@ export default (toParse: string): everything_element[] => {
                 everything.push([SyntaxKind.IfStatement,node.expression.pos - 1,indexOfRightParen + 1])
                 break
             }
+            case SyntaxKind.WhileStatement:{
+                tempArr.push(node.statement)
+                tempArr.push(node.expression)
+                const indexOfRightParen = toParse.indexOf(')',node.expression.end)
+                everything.push([SyntaxKind.IfStatement,node.expression.pos - 1,indexOfRightParen + 1])
+                break
+            }
             case SyntaxKind.ExpressionStatement:
                 tempArr.push(node.expression)
                 break
@@ -224,6 +234,11 @@ export default (toParse: string): everything_element[] => {
                 everything.push([SyntaxKind.NewExpression,node.arguments.pos - 1,node.end])
                 reversePushTo_TempArr(node.arguments)
                 tempArr.push(node.expression)
+                break
+            case SyntaxKind.ReturnStatement:
+                if (node.expression) {
+                    tempArr.push(node.expression)
+                }
                 break
             case SyntaxKind.StringLiteral:
                 // https://ts-ast-viewer.com/#code/IYAgvCldO1DkAmeQ
@@ -249,6 +264,8 @@ export default (toParse: string): everything_element[] => {
             case SyntaxKind.Identifier:
                 // d('SyntaxKind.Identifier REEEEEEEEEEEEEEEEEEEEEEEEEEE',node)
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.TrueKeyword:
                 break
             default:
                 d(node.kind)
