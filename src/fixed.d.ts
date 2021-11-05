@@ -91,7 +91,7 @@ declare namespace ts {
     }
 }
 declare namespace ts {
-    export type Expression = LiteralToken | Identifier | CallExpression | ElementAccessExpression | ArrayLiteralExpression | ObjectLiteralExpression
+    export type Expression = LiteralToken | Identifier | CallExpression | ElementAccessExpression | ArrayLiteralExpression | ObjectLiteralExpression | AccessExpression
     export type LeftHandSideExpression = BinaryExpression | NumericLiteral
 
     export type Path = string & {

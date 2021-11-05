@@ -1,0 +1,4 @@
+let endStringContinuation
+endStringContinuation = function(  ) {
+
+}
