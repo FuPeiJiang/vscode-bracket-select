@@ -111,9 +111,20 @@ export default (toParse: string): everything_element[] => {
                 tempArr.push(nodeArr[i])
             }
         }
-        function getEndPosOfWhiteSpace(pos_endOfWhiteSpace: number): number {
+        function getEndPosOfWhiteSpace(startSearch: number): number {
+            let pos_endOfWhiteSpace = startSearch
             while (whiteSpaceObj[toParse[pos_endOfWhiteSpace]]) {
                 pos_endOfWhiteSpace++
+            }
+            if (pos_endOfWhiteSpace < toParse.length) {
+                if (toParse[pos_endOfWhiteSpace] !== '\n') {
+                    // revert to last
+                    const whiteSpaceStr = toParse.slice(startSearch,pos_endOfWhiteSpace)
+                    const pos_lastNewline = whiteSpaceStr.lastIndexOf('\n')
+                    if (pos_lastNewline !== -1) {
+                        pos_endOfWhiteSpace -= (whiteSpaceStr.length - 1) - pos_lastNewline
+                    }
+                }
             }
             return pos_endOfWhiteSpace
         }
