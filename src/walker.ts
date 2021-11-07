@@ -83,7 +83,7 @@ function d(...text: (any)[]) {
 // writeSync(arrOrObjToString(everything),'everything_before.txt')
 // const converted = modifyEverythingToV2(everything,false)
 
-function HrTime_diffToMs(diff: [number,number]) {
+function HrTime_diffToMs(diff: [number,number]): string {
     // d(diff)
     // return diff[0] * 1000000 + diff[1] / 1000000
     return `${diff[0] * 1000 + diff[1] / 1000000}ms`
@@ -115,8 +115,8 @@ export default (toParse: string): everything_element[] => {
             readonly kind: my_syntax_kind.JustPushIt,element_everything: everything_element
         }
         // type ExpressionInterface = LiteralToken | CallExpression | ElementAccessExpression | ArrayLiteralExpression
-        type myNode = JustPushIt | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression
-
+        type ts_Node = | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression
+        type myNode = JustPushIt | ts_Node
 
         //NamedImportBindings for tempArr.push(node.importClause.namedBindings)
         // Expression for tempArr.push(node.moduleSpecifier)

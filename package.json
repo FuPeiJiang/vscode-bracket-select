@@ -5,7 +5,7 @@
 	"publisher": "FuPeiJiang",
 	"version": "0.0.1",
 	"engines": {
-		"vscode": "^1.57.1"
+		"vscode": "^1.61.0"
 	},
 	"repository": {
 		"type": "git",
@@ -17,7 +17,7 @@
 	"activationEvents": [
 		"onCommand:vscode-bracket-select.helloWorld"
 	],
-	"main": "./out/src/extension.js",
+	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -105,7 +105,6 @@
 		"ext": "webpack --mode production && vsce package -o vscode-bracket-select.vsix && code --install-extension vscode-bracket-select.vsix",
 		"vsix": "webpack --mode production && vsce package -o vscode-bracket-select.vsix",
 		"nowebpack": "vsce package -o vscode-bracket-select.vsix && code --install-extension vscode-bracket-select.vsix",
-		"vscode:prepublish": "yarn run package",
 		"compile": "webpack --config ./webpack.config.js",
 		"package": "webpack --mode production --devtool hidden-source-map --config ./webpack.config.js",
 		"test-compile": "tsc -p ./",

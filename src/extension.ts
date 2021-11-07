@@ -3,7 +3,7 @@ import type {ExtensionContext} from 'vscode'
 
 import walker from './walker'
 
-import React,{useState,useEffect} from 'react'
+// import React,{useState,useEffect} from 'react'
 
 export function activate(context: ExtensionContext): void {
     function d(...text: (any)[]) {
