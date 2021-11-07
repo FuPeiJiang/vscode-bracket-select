@@ -76,7 +76,7 @@ function d(...text: (any)[]) {
     // const lineNumber = frame.split(':').reverse()[1]
     const functionName = frame.split(' ')[5]
     // console.log(`${functionName}:${lineNumber}`,...text)
-    console.log(`${functionName}`,'➤',...text)
+    console.debug(`${functionName}`,'➤',...text)
 }
 
 // writeSync(arrOrObjToString(everything),'everything_before.txt')
@@ -90,7 +90,9 @@ function HrTime_diffToMs(diff: [number,number]): string {
 
 
 type everything_element = [SyntaxKind,number,number]
-
+declare const enum my_syntax_kind {
+    JustPushIt = -1,
+}
 
 export default (toParse: string): everything_element[] => {
     try {
@@ -105,9 +107,6 @@ export default (toParse: string): everything_element[] => {
         }
         // let node: any = parse(toParse,{range:true})
 
-        enum my_syntax_kind {
-            JustPushIt = -1,
-        }
         // type myNode = SourceFile| HasJSDoc | NamedImportBindings | Expression
         interface JustPushIt {
             readonly kind: my_syntax_kind.JustPushIt,element_everything: everything_element
@@ -122,7 +121,7 @@ export default (toParse: string): everything_element[] => {
         const their_startTime = process.hrtime()
         let node: myNode = createSourceFile('',toParse,ScriptTarget.Latest,true)
         const their_diff = process.hrtime(their_startTime)
-        d(HrTime_diffToMs(their_diff)) //150ms
+        console.log(`ts parser diff: ${HrTime_diffToMs(their_diff)}`) //150ms
 
         const my_startTime = process.hrtime()
         // d(node.getChildren())
@@ -289,8 +288,8 @@ export default (toParse: string): everything_element[] => {
         return everything
 
     } catch (error) {
-        d('walker error')
-        d(error)
+        console.log('walker error')
+        console.log(error)
         return []
 
     }

@@ -106,7 +106,7 @@ declare namespace ts {
         readonly pos: number;
         readonly end: number;
     }
-    export enum SyntaxKind {
+    export declare const enum SyntaxKind {
         Unknown = 0,
         EndOfFileToken = 1,
         SingleLineCommentTrivia = 2,
