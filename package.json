@@ -106,6 +106,7 @@
 		"e": "node esbuild.config.js && vsce package -o vscode-bracket-select.vsix && code --install-extension vscode-bracket-select.vsix",
 		"w1": "webpack --mode production",
 		"w2": "node \"build/main to dist.js\" && vsce package -o vscode-bracket-select.vsix && code --install-extension vscode-bracket-select.vsix && node \"build/main to out-src.js\"",
+		"w": "yarn w1 && yarn w2",
 		"ext": "webpack --mode production && vsce package -o vscode-bracket-select.vsix && code --install-extension vscode-bracket-select.vsix",
 		"vsix": "webpack --mode production && vsce package -o vscode-bracket-select.vsix",
 		"nowebpack": "vsce package -o vscode-bracket-select.vsix && code --install-extension vscode-bracket-select.vsix",

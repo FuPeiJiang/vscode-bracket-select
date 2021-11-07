@@ -1,4 +1,4 @@
-import {createSourceFile,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,NamedImportBindings,Expression,LeftHandSideExpression,PropertyName,NewExpression,NodeArray,CaseBlock,CaseOrDefaultClause,IfStatement,WhileStatement,SwitchStatement} from 'typescript'
+import {createSourceFile,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,NamedImportBindings,Expression,LeftHandSideExpression,PropertyName,NewExpression,NodeArray,CaseBlock,CaseOrDefaultClause,IfStatement,WhileStatement,SwitchStatement,CatchClause} from 'typescript'
 // import {createSourceFile} from 'typescript'
 // import {Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from './lol'
 
@@ -135,7 +135,7 @@ export default (toParse: string): everything_element[] => {
             readonly kind: my_syntax_kind.JustPushIt,element_everything: everything_element
         }
         // type ExpressionInterface = LiteralToken | CallExpression | ElementAccessExpression | ArrayLiteralExpression
-        type ts_Node = SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression | CaseBlock | CaseOrDefaultClause
+        type ts_Node = SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression | CaseBlock | CaseOrDefaultClause | CatchClause
         type myNode = JustPushIt | ts_Node
 
         //NamedImportBindings for tempArr.push(node.importClause.namedBindings)
@@ -299,6 +299,23 @@ export default (toParse: string): everything_element[] => {
                 reversePushTo_TempArr(node.statements)
                 break
             }
+            case SyntaxKind.TryStatement:
+                if (node.finallyBlock) {
+                    tempArr.push(node.finallyBlock)
+                }
+                if (node.catchClause) {
+                    tempArr.push(node.catchClause)
+                }
+                node = node.tryBlock
+                continue
+            case SyntaxKind.CatchClause:
+                tempArr.push(node.block)
+                if (node.variableDeclaration) {
+                    const indexOfRightParen = toParse.indexOf(')',node.variableDeclaration.end)
+                    everything.push([SyntaxKind.CatchClause,node.variableDeclaration.pos - 1,indexOfRightParen + 1])
+                    tempArr.push(node.variableDeclaration)
+                }
+                break
             case SyntaxKind.StringLiteral:
                 // https://ts-ast-viewer.com/#code/IYAgvCldO1DkAmeQ
                 everything.push([SyntaxKind.StringLiteral,node.getStart(),node.end])
