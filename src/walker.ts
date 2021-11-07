@@ -232,6 +232,15 @@ export default (toParse: string): everything_element[] => {
                 everything.push([SyntaxKind.FunctionExpression,node.parameters.pos - 1,indexOfRightParen + 1])
                 break
             }
+            case SyntaxKind.FunctionDeclaration:{
+                if (node.body) {
+                    tempArr.push(node.body)
+                }
+                reversePushTo_TempArr(node.parameters)
+                const indexOfRightParen = toParse.indexOf(')',node.parameters.end)
+                everything.push([SyntaxKind.FunctionDeclaration,node.parameters.pos - 1,indexOfRightParen + 1])
+                break
+            }
             case SyntaxKind.Block:
                 everything.push([SyntaxKind.Block,node.statements.pos - 1,node.end])
                 reversePushTo_TempArr(node.statements)
