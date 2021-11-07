@@ -1,5 +1,4 @@
-import {reverse} from 'dns'
-import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,CallExpression,LiteralToken,LeftHandSideExpression,PropertyName,NewExpression,NodeArray} from 'typescript'
+import {createSourceFile,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,NamedImportBindings,Expression,LeftHandSideExpression,PropertyName,NewExpression,NodeArray} from 'typescript'
 // import {createSourceFile} from 'typescript'
 // import {Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from './lol'
 
