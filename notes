@@ -118,3 +118,6 @@ TypeOfExpression
 VoidExpression
 AwaitExpression
 TypeAssertion
+
+const indexOfRightParen = toParse.indexOf\('\)',node.expression.end\)\n                everything.push\(\[SyntaxKind\.(\w*?),node.expression.pos - 1,indexOfRightParen \+ 1\]\)(?=\n                break)
+push_Expr(SyntaxKind.$1)

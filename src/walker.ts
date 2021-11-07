@@ -1,5 +1,5 @@
 import {reverse} from 'dns'
-import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,CallExpression,LiteralToken,LeftHandSideExpression,PropertyName,NewExpression} from 'typescript'
+import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,CallExpression,LiteralToken,LeftHandSideExpression,PropertyName,NewExpression,CaseBlock,CaseOrDefaultClause} from 'typescript'
 // import {createSourceFile} from 'typescript'
 // import {Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from './lol'
 
@@ -115,13 +115,14 @@ export default (toParse: string): everything_element[] => {
             readonly kind: my_syntax_kind.JustPushIt,element_everything: everything_element
         }
         // type ExpressionInterface = LiteralToken | CallExpression | ElementAccessExpression | ArrayLiteralExpression
-        type myNode = JustPushIt | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression
+        type myNode = JustPushIt | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression | CaseBlock | CaseOrDefaultClause
 
 
         //NamedImportBindings for tempArr.push(node.importClause.namedBindings)
         // Expression for tempArr.push(node.moduleSpecifier)
 
         let node: myNode = createSourceFile('',toParse,ScriptTarget.Latest,true)
+        node.getChildAt(0)
         // const diff = process.hrtime(startTime)
         // d(HrTime_diffToMs(diff)) //150ms
 
@@ -143,21 +144,19 @@ export default (toParse: string): everything_element[] => {
             case my_syntax_kind.JustPushIt:
                 everything.push(node.element_everything)
                 break
-            case SyntaxKind.VariableStatement:{
+            case SyntaxKind.VariableStatement:
                 reversePushTo_TempArr(node.declarationList.declarations)
                 break
-            }
             case SyntaxKind.VariableDeclaration:
                 if (node.initializer) {
                     tempArr.push(node.initializer)
                 }
                 break
-            case SyntaxKind.CallExpression:{
+            case SyntaxKind.CallExpression:
                 reversePushTo_TempArr(node.arguments)
                 tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.CallExpression,node.arguments.pos - 1,node.end]})
                 tempArr.push(node.expression)
                 break
-            }
             case SyntaxKind.ElementAccessExpression:
                 tempArr.push(node.argumentExpression)
                 tempArr.push({kind:my_syntax_kind.JustPushIt,element_everything:[SyntaxKind.ElementAccessExpression,node.argumentExpression.pos - 1,node.end]})
@@ -216,15 +215,13 @@ export default (toParse: string): everything_element[] => {
                 }
                 tempArr.push(node.thenStatement)
                 tempArr.push(node.expression)
-                const indexOfRightParen = toParse.indexOf(')',node.expression.end)
-                everything.push([SyntaxKind.IfStatement,node.expression.pos - 1,indexOfRightParen + 1])
+                push_Expr()
                 break
             }
             case SyntaxKind.WhileStatement:{
                 tempArr.push(node.statement)
                 tempArr.push(node.expression)
-                const indexOfRightParen = toParse.indexOf(')',node.expression.end)
-                everything.push([SyntaxKind.IfStatement,node.expression.pos - 1,indexOfRightParen + 1])
+                push_Expr()
                 break
             }
             case SyntaxKind.ExpressionStatement:
@@ -242,6 +239,23 @@ export default (toParse: string): everything_element[] => {
                 break
             case SyntaxKind.LabeledStatement:
                 tempArr.push(node.statement)
+                break
+            case SyntaxKind.SwitchStatement:{
+                tempArr.push(node.caseBlock)
+                tempArr.push(node.expression)
+                push_Expr()
+                break
+            }
+            case SyntaxKind.CaseBlock:
+                everything.push([SyntaxKind.CaseBlock,node.getStart(),node.end])
+                reversePushTo_TempArr(node.clauses)
+                break
+            case SyntaxKind.CaseClause:{
+                everything.push([SyntaxKind.CaseClause,node.getStart(),node.end])
+                reversePushTo_TempArr(node.statements)
+                push_Expr()
+                break
+            }
                 break
             case SyntaxKind.StringLiteral:
                 // https://ts-ast-viewer.com/#code/IYAgvCldO1DkAmeQ
@@ -284,6 +298,11 @@ export default (toParse: string): everything_element[] => {
         }
         return everything
 
+        function push_Expr() {
+            const indexOfRightParen = toParse.indexOf(')',node.expression.end)
+            everything.push([node.kind,node.expression.pos - 1,indexOfRightParen + 1])
+        }
+
     } catch (error) {
         d('walker error')
         d(error)
@@ -291,4 +310,5 @@ export default (toParse: string): everything_element[] => {
 
     }
 }
+
 
