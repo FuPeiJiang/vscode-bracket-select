@@ -154,12 +154,11 @@ export default (toParse: string): everything_element[] => {
         if (statements.length === 0) {
             return []
         }
-        d(statements)
 
-        for (let i = statements.length - 2; i > -1; i--) {
+        for (let i = statements.length - 1; i > 0; i--) {
             tempArr.push(statements[i] as myNode)
         }
-        node = statements[statements.length - 1] as myNode
+        node = statements[0]
 
         outer:
         while (true) {
@@ -173,7 +172,8 @@ export default (toParse: string): everything_element[] => {
                 break
             case SyntaxKind.VariableDeclaration:
                 if (node.initializer) {
-                    tempArr.push(node.initializer)
+                    node = node.initializer
+                    continue
                 }
                 break
             case SyntaxKind.CallExpression:
@@ -191,8 +191,8 @@ export default (toParse: string): everything_element[] => {
                 // we ignore node.name
                 // tempArr.push(node.name)
                 // d(node.argumentExpression.kind)
-                tempArr.push(node.expression)
-                break
+                node = node.expression
+                continue
             case SyntaxKind.ArrayLiteralExpression:
                 everything.push([SyntaxKind.ArrayLiteralExpression,node.elements.pos - 1,node.end])
                 reversePushTo_TempArr(node.elements)
