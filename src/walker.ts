@@ -1,4 +1,4 @@
-import {createSourceFile,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,NamedImportBindings,Expression,LeftHandSideExpression,PropertyName,NewExpression,NodeArray} from 'typescript'
+import {createSourceFile,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,NamedImportBindings,Expression,LeftHandSideExpression,PropertyName,NewExpression,NodeArray,CaseBlock,CaseOrDefaultClause,IfStatement,WhileStatement,SwitchStatement} from 'typescript'
 // import {createSourceFile} from 'typescript'
 // import {Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from './lol'
 
@@ -94,6 +94,12 @@ declare const enum my_syntax_kind {
     JustPushIt = -1,
 }
 
+type stringIndexNum = {
+    [key: string]: number
+}
+const whiteSpaceObj: stringIndexNum = {' ':1,'\t':1,'\n':1,'\r':1}
+
+
 export default (toParse: string): everything_element[] => {
     try {
 
@@ -105,6 +111,12 @@ export default (toParse: string): everything_element[] => {
                 tempArr.push(nodeArr[i])
             }
         }
+        function getEndPosOfWhiteSpace(pos_endOfWhiteSpace: number): number {
+            while (whiteSpaceObj[toParse[pos_endOfWhiteSpace]]) {
+                pos_endOfWhiteSpace++
+            }
+            return pos_endOfWhiteSpace
+        }
         // let node: any = parse(toParse,{range:true})
 
         // type myNode = SourceFile| HasJSDoc | NamedImportBindings | Expression
@@ -112,7 +124,7 @@ export default (toParse: string): everything_element[] => {
             readonly kind: my_syntax_kind.JustPushIt,element_everything: everything_element
         }
         // type ExpressionInterface = LiteralToken | CallExpression | ElementAccessExpression | ArrayLiteralExpression
-        type ts_Node = SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression
+        type ts_Node = SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression | CaseBlock | CaseOrDefaultClause
         type myNode = JustPushIt | ts_Node
 
         //NamedImportBindings for tempArr.push(node.importClause.namedBindings)
@@ -186,6 +198,12 @@ export default (toParse: string): everything_element[] => {
                 tempArr.push(node.right)
                 node = node.left
                 continue
+            case SyntaxKind.PrefixUnaryExpression:
+                node = node.operand
+                continue
+            case SyntaxKind.PostfixUnaryExpression:
+                node = node.operand
+                continue
             case SyntaxKind.ExportAssignment:
                 tempArr.push(node.expression)
                 break
@@ -249,12 +267,18 @@ export default (toParse: string): everything_element[] => {
                 reversePushTo_TempArr(node.clauses)
                 break
             case SyntaxKind.CaseClause:{
-                everything.push([SyntaxKind.CaseClause,node.getStart(),node.end])
+                const pos_colon = toParse.indexOf(':',node.expression.end)
+                everything.push([SyntaxKind.CaseClause,pos_colon,getEndPosOfWhiteSpace(node.end)])
                 reversePushTo_TempArr(node.statements)
-                push_Expr()
+                node = node.expression
+                continue
+            }
+            case SyntaxKind.DefaultClause:{
+                const pos_colon = toParse.indexOf(':',node.getStart() + 7)
+                everything.push([SyntaxKind.DefaultClause,pos_colon,getEndPosOfWhiteSpace(node.end)])
+                reversePushTo_TempArr(node.statements)
                 break
             }
-                break
             case SyntaxKind.StringLiteral:
                 // https://ts-ast-viewer.com/#code/IYAgvCldO1DkAmeQ
                 everything.push([SyntaxKind.StringLiteral,node.getStart(),node.end])
@@ -281,6 +305,8 @@ export default (toParse: string): everything_element[] => {
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
+            case SyntaxKind.BreakStatement:
+            case SyntaxKind.ContinueStatement:
                 break
             default:
                 d(node.kind)
@@ -300,9 +326,15 @@ export default (toParse: string): everything_element[] => {
 
         return everything
 
+        type hasExpr = IfStatement | WhileStatement | SwitchStatement
         function push_Expr() {
-            const indexOfRightParen = toParse.indexOf(')',node.expression.end)
-            everything.push([node.kind,node.expression.pos - 1,indexOfRightParen + 1])
+            //to pass typescript errors, now my code isn't clean anymore
+            const indexOfRightParen = toParse.indexOf(')',(node as hasExpr).expression.end)
+            everything.push([
+                (node as hasExpr).kind,
+                (node as hasExpr).expression.pos - 1,
+                indexOfRightParen + 1,
+            ])
         }
 
     } catch (error) {
