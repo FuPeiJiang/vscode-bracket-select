@@ -1,5 +1,5 @@
 import {reverse} from 'dns'
-import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,CallExpression,LiteralToken,LeftHandSideExpression,PropertyName,NewExpression} from 'typescript'
+import {createSourceFile,Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,CallExpression,LiteralToken,LeftHandSideExpression,PropertyName,NewExpression,NodeArray} from 'typescript'
 // import {createSourceFile} from 'typescript'
 // import {Declaration,Node,ScriptTarget,SourceFile,SyntaxKind,HasJSDoc,Statement,TypeOnlyCompatibleAliasDeclaration,NamedImportBindings,Expression,ImportDeclaration,ElementAccessExpression,ArrayLiteralExpression,CallExpression,LiteralToken,LeftHandSideExpression} from './lol'
 
@@ -99,13 +99,12 @@ export default (toParse: string): everything_element[] => {
         const everything: everything_element[] = []
 
         const tempArr: myNode[] = []
-        function reversePushTo_TempArr<T>(nodeArr: T) {
+        function reversePushTo_TempArr(nodeArr: NodeArray<ts_Node>) {
             for (let i = nodeArr.length - 1; i > -1; i--) {
                 tempArr.push(nodeArr[i])
             }
         }
         // let node: any = parse(toParse,{range:true})
-        // const startTime = process.hrtime()
 
         enum my_syntax_kind {
             JustPushIt = -1,
@@ -115,15 +114,20 @@ export default (toParse: string): everything_element[] => {
             readonly kind: my_syntax_kind.JustPushIt,element_everything: everything_element
         }
         // type ExpressionInterface = LiteralToken | CallExpression | ElementAccessExpression | ArrayLiteralExpression
-        type ts_Node = | SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression
+        type ts_Node = SourceFile | HasJSDoc | LeftHandSideExpression | Expression | NamedImportBindings | PropertyName | NewExpression
         type myNode = JustPushIt | ts_Node
 
         //NamedImportBindings for tempArr.push(node.importClause.namedBindings)
         // Expression for tempArr.push(node.moduleSpecifier)
 
+        const their_startTime = process.hrtime()
         let node: myNode = createSourceFile('',toParse,ScriptTarget.Latest,true)
-        // const diff = process.hrtime(startTime)
-        // d(HrTime_diffToMs(diff)) //150ms
+        const their_diff = process.hrtime(their_startTime)
+        d(HrTime_diffToMs(their_diff)) //150ms
+
+        const my_startTime = process.hrtime()
+        // d(node.getChildren())
+        // return
 
         const statements = node.statements
         if (statements.length === 0) {
@@ -131,10 +135,10 @@ export default (toParse: string): everything_element[] => {
         }
         d(statements)
 
-        for (let i = statements.length - 1; i > -1; i--) {
+        for (let i = statements.length - 2; i > -1; i--) {
             tempArr.push(statements[i] as myNode)
         }
-        node = tempArr.pop() as myNode
+        node = statements[statements.length - 1] as myNode
 
         outer:
         while (true) {
@@ -184,11 +188,8 @@ export default (toParse: string): everything_element[] => {
                 break
             case SyntaxKind.BinaryExpression:
                 tempArr.push(node.right)
-                tempArr.push(node.left)
-                break
-            case SyntaxKind.PostfixUnaryExpression:
-                tempArr.push(node.operand) //c++, but it's possible that arr[1]++
-                break
+                node = node.left
+                continue
             case SyntaxKind.ExportAssignment:
                 tempArr.push(node.expression)
                 break
@@ -228,8 +229,8 @@ export default (toParse: string): everything_element[] => {
                 break
             }
             case SyntaxKind.ExpressionStatement:
-                tempArr.push(node.expression)
-                break
+                node = node.expression
+                continue
             case SyntaxKind.NewExpression:
                 everything.push([SyntaxKind.NewExpression,node.arguments.pos - 1,node.end])
                 reversePushTo_TempArr(node.arguments)
@@ -282,6 +283,10 @@ export default (toParse: string): everything_element[] => {
             }
             break outer
         }
+
+        const my_diff = process.hrtime(my_startTime)
+        console.log(`my_diff: ${HrTime_diffToMs(my_diff)}`)
+
         return everything
 
     } catch (error) {

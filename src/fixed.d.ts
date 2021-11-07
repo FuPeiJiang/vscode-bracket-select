@@ -93,6 +93,7 @@ declare namespace ts {
 declare namespace ts {
     export type Expression = JsonObjectExpression | Identifier | CallExpression | ElementAccessExpression | AccessExpression | PostfixUnaryExpression
     export type LeftHandSideExpression = BinaryExpression | NumericLiteral
+    export type Statement = EmptyStatement | VariableStatement | ExpressionStatement | IfStatement | DoStatement | WhileStatement | ForStatement | ForInStatement | ForOfStatement | ContinueStatement | BreakStatement | ReturnStatement | WithStatement | SwitchStatement | LabeledStatement | ThrowStatement | TryStatement | DebuggerStatement
 
     export type Path = string & {
         __pathBrand: any;
@@ -1396,10 +1397,10 @@ declare namespace ts {
         readonly containsOnlyTriviaWhiteSpaces: boolean;
     }
     export type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
-    export interface Statement extends Node, JSDocContainer {
+    export interface not_Statemen_t extends Node, JSDocContainer {
         _statementBrand: any;
     }
-    export interface NotEmittedStatement extends Statement {
+    export interface NotEmittedStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.NotEmittedStatement;
     }
     /**
@@ -1409,10 +1410,10 @@ declare namespace ts {
         readonly kind: SyntaxKind.CommaListExpression;
         readonly elements: NodeArray<Expression>;
     }
-    export interface EmptyStatement extends Statement {
+    export interface EmptyStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.EmptyStatement;
     }
-    export interface DebuggerStatement extends Statement {
+    export interface DebuggerStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.DebuggerStatement;
     }
     export interface MissingDeclaration extends DeclarationStatement {
@@ -1420,19 +1421,19 @@ declare namespace ts {
         readonly name?: Identifier;
     }
     export type BlockLike = SourceFile | Block | ModuleBlock | CaseOrDefaultClause;
-    export interface Block extends Statement {
+    export interface Block extends not_Statemen_t {
         readonly kind: SyntaxKind.Block;
         readonly statements: NodeArray<Statement>;
     }
-    export interface VariableStatement extends Statement {
+    export interface VariableStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.VariableStatement;
         readonly declarationList: VariableDeclarationList;
     }
-    export interface ExpressionStatement extends Statement {
+    export interface ExpressionStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.ExpressionStatement;
         readonly expression: Expression;
     }
-    export interface IfStatement extends Statement {
+    export interface IfStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.IfStatement;
         readonly expression: Expression;
         readonly thenStatement: Block;
@@ -1468,25 +1469,25 @@ declare namespace ts {
         readonly initializer: ForInitializer;
         readonly expression: Expression;
     }
-    export interface BreakStatement extends Statement {
+    export interface BreakStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.BreakStatement;
         readonly label?: Identifier;
     }
-    export interface ContinueStatement extends Statement {
+    export interface ContinueStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.ContinueStatement;
         readonly label?: Identifier;
     }
     export type BreakOrContinueStatement = BreakStatement | ContinueStatement;
-    export interface ReturnStatement extends Statement {
+    export interface ReturnStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.ReturnStatement;
         readonly expression?: Expression;
     }
-    export interface WithStatement extends Statement {
+    export interface WithStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.WithStatement;
         readonly expression: Expression;
         readonly statement: Statement;
     }
-    export interface SwitchStatement extends Statement {
+    export interface SwitchStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.SwitchStatement;
         readonly expression: Expression;
         readonly caseBlock: CaseBlock;
@@ -1509,16 +1510,16 @@ declare namespace ts {
         readonly statements: NodeArray<Statement>;
     }
     export type CaseOrDefaultClause = CaseClause | DefaultClause;
-    export interface LabeledStatement extends Statement {
+    export interface LabeledStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.LabeledStatement;
         readonly label: Identifier;
         readonly statement: WhileStatement | ForStatement;
     }
-    export interface ThrowStatement extends Statement {
+    export interface ThrowStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.ThrowStatement;
         readonly expression: Expression;
     }
-    export interface TryStatement extends Statement {
+    export interface TryStatement extends not_Statemen_t {
         readonly kind: SyntaxKind.TryStatement;
         readonly tryBlock: Block;
         readonly catchClause?: CatchClause;
@@ -1629,7 +1630,7 @@ declare namespace ts {
         readonly parent: ImportEqualsDeclaration;
         readonly expression: Expression;
     }
-    export interface ImportDeclaration extends Statement {
+    export interface ImportDeclaration extends not_Statemen_t {
         readonly kind: SyntaxKind.ImportDeclaration;
         readonly parent: SourceFile | ModuleBlock;
         readonly importClause?: ImportClause;
