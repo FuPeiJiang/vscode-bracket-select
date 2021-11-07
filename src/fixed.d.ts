@@ -1439,7 +1439,7 @@ declare namespace ts {
         readonly thenStatement: Block;
         readonly elseStatement?: IfStatement;
     }
-    export interface IterationStatement extends Statement {
+    export interface IterationStatement extends not_Statemen_t {
         readonly statement: Block;
     }
     export interface DoStatement extends IterationStatement {
