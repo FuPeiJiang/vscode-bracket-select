@@ -264,8 +264,12 @@ export default (toParse: string): everything_element[] => {
                 node = node.expression
                 continue
             case SyntaxKind.NewExpression:
-                everything.push([SyntaxKind.NewExpression,node.arguments.pos - 1,node.end])
-                reversePushTo_TempArr(node.arguments)
+                // example: var suite = new Benchmark.Suite
+                if (node.arguments) {
+                    everything.push([SyntaxKind.NewExpression,node.arguments.pos - 1,node.end])
+                    reversePushTo_TempArr(node.arguments)
+                }
+
                 tempArr.push(node.expression)
                 break
             case SyntaxKind.ReturnStatement:
