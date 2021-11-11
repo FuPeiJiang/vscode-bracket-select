@@ -1,8 +1,4 @@
 module.exports = {
-    // https://github.com/Chatie/eslint-config/issues/45#issuecomment-885507652
-    'globals':{
-        'NodeJS':true,
-    },
     'root':true,
     'parser':'@typescript-eslint/parser',
     'parserOptions':{
@@ -152,7 +148,7 @@ module.exports = {
             'error',
         ],
         'no-inner-declarations':[
-            'off',
+            'error',
         ],
         'no-invalid-regexp':[
             'error',
@@ -217,9 +213,9 @@ module.exports = {
         'no-unused-labels':[
             'error',
         ],
-        'no-unused-vars':[
-            'error',
-        ],
+        // https://github.com/typescript-eslint/typescript-eslint/issues/2621#issuecomment-701970389
+        'no-unused-vars':'off',
+        '@typescript-eslint/no-unused-vars':'error',
         'no-useless-catch':[
             'error',
         ],
